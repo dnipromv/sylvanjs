@@ -14,7 +14,7 @@ module.exports = {
         filename: 'sylvan.js',
         path: path.resolve(__dirname, 'build'),
         library: 'Sylvan',
-        libraryTarget: 'var',
+        libraryTarget: 'umd',
         libraryExport: 'default'
     },
     module: {

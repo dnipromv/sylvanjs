@@ -23,8 +23,10 @@ class SceneDirector {
             const director = this;
             scene.load().then(() => { 
                 if (director._activeScene) {
-                    director._activeScene.ticker.stop();
-                    delete director._activeScene.ticker;
+                    if (director._activeScene.ticker) {
+                        director._activeScene.ticker.stop();
+                        delete director._activeScene.ticker;    
+                    }
                     
                     director._activeScene.destroy();
                     director._stage.removeChild(director._activeScene);
@@ -32,11 +34,16 @@ class SceneDirector {
 
                 scene.init.apply(scene, args);
                 
-                scene.ticker = new PIXI.ticker.Ticker();
-                scene.ticker.add((dt) => {
-                    scene.update(dt * 0.01);
-                });
-                scene.ticker.start();
+                if (scene.update) {
+                    let elapsedTime = 0;
+                    scene.ticker = new PIXI.ticker.Ticker();
+                    scene.ticker.add((dt) => {
+                        const dtN = dt * 0.01;
+                        elapsedTime += dtN;
+                        scene.update(dtN, elapsedTime);
+                    });
+                    scene.ticker.start();
+                }
 
                 director._stage.addChild(scene);
                 director._activeScene = scene;

@@ -1,5 +1,14 @@
-var Sylvan =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["Sylvan"] = factory();
+	else
+		root["Sylvan"] = factory();
+})(window, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -46042,11 +46051,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(pixi_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var pixi_tilemap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi-tilemap */ "./node_modules/pixi-tilemap/dist/pixi-tilemap.js");
 /* harmony import */ var pixi_tilemap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(pixi_tilemap__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var victor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! victor */ "./node_modules/victor/index.js");
-/* harmony import */ var victor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(victor__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _js_Game__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./js/Game */ "./src/js/Game.js");
-/* harmony import */ var _js_components_structure_Scene__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./js/components/structure/Scene */ "./src/js/components/structure/Scene.js");
-/* harmony import */ var _js_components_Camera__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./js/components/Camera */ "./src/js/components/Camera.js");
+/* harmony import */ var _js_Game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./js/Game */ "./src/js/Game.js");
+/* harmony import */ var _js_components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./js/components/structure/Scene */ "./src/js/components/structure/Scene.js");
+/* harmony import */ var _js_components_Vector__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./js/components/Vector */ "./src/js/components/Vector.js");
+/* harmony import */ var _js_components_Matrix__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./js/components/Matrix */ "./src/js/components/Matrix.js");
+/* harmony import */ var _js_components_Camera__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./js/components/Camera */ "./src/js/components/Camera.js");
+/* harmony import */ var _js_components_HttpService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./js/components/HttpService */ "./src/js/components/HttpService.js");
+
+
 
 
 
@@ -46054,10 +46066,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const Sylvan = pixi_js__WEBPACK_IMPORTED_MODULE_0__;
-Sylvan.Vector = victor__WEBPACK_IMPORTED_MODULE_2__;
-Sylvan.Game = _js_Game__WEBPACK_IMPORTED_MODULE_3__["default"];
-Sylvan.Scene = _js_components_structure_Scene__WEBPACK_IMPORTED_MODULE_4__["default"];
-Sylvan.Camera = _js_components_Camera__WEBPACK_IMPORTED_MODULE_5__["default"];
+Sylvan.Game = _js_Game__WEBPACK_IMPORTED_MODULE_2__["default"];
+Sylvan.Scene = _js_components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__["default"];
+Sylvan.Vector = _js_components_Vector__WEBPACK_IMPORTED_MODULE_4__["default"];
+Sylvan.Matrix = _js_components_Matrix__WEBPACK_IMPORTED_MODULE_5__["default"];
+Sylvan.Camera = _js_components_Camera__WEBPACK_IMPORTED_MODULE_6__["default"];
+Sylvan.HttpService = _js_components_HttpService__WEBPACK_IMPORTED_MODULE_7__["default"];
 /* harmony default export */ __webpack_exports__["default"] = (Sylvan);
 
 /***/ }),
@@ -46363,6 +46377,59 @@ class EventDispatcher extends _structure_Interface__WEBPACK_IMPORTED_MODULE_0__[
 
 /***/ }),
 
+/***/ "./src/js/components/HttpService.js":
+/*!******************************************!*\
+  !*** ./src/js/components/HttpService.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+class HttpService {
+  constructor(baseUrl) {
+    this._baseUrl = baseUrl;
+  }
+
+  async get(endpoint) {
+    return _sendRequest("GET", this._baseUrl + endpoint);
+  }
+
+  async post(endpoint) {
+    return _sendRequest("POST", this._baseUrl + endpoint);
+  }
+
+}
+
+function _sendRequest(accessMethod, url, body) {
+  return new Promise((resolve, reject) => {
+    const request = _createRequest(accessMethod, url);
+
+    request.send(body);
+
+    request.onload = function () {
+      if (request.status >= 200 && request.status < 300) {
+        resolve(JSON.parse(request.response));
+      } else {
+        reject(request.response);
+      }
+    };
+  });
+}
+
+function _createRequest(accessMethod, url) {
+  const request = new XMLHttpRequest();
+  request.open(accessMethod, url, true);
+  return request;
+}
+
+;
+/* harmony default export */ __webpack_exports__["default"] = (HttpService);
+
+/***/ }),
+
 /***/ "./src/js/components/InputHandler.js":
 /*!*******************************************!*\
   !*** ./src/js/components/InputHandler.js ***!
@@ -46400,6 +46467,172 @@ class InputHandler {
 
 _EventDispatcher__WEBPACK_IMPORTED_MODULE_0__["default"].embedInto(InputHandler);
 /* harmony default export */ __webpack_exports__["default"] = (InputHandler);
+
+/***/ }),
+
+/***/ "./src/js/components/Matrix.js":
+/*!*************************************!*\
+  !*** ./src/js/components/Matrix.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+class Matrix {
+  constructor(width = 0, height = 0) {
+    this.width = width;
+    this.height = height;
+    this.length = width * height;
+  }
+
+  static clone(matrix) {
+    const clone = new Matrix(matrix.width, matrix.height);
+
+    for (const [element, c, r] of matrix) clone[c][r] = element;
+
+    return clone;
+  }
+
+  get width() {
+    return this._cols || 0;
+  }
+
+  get height() {
+    return this._rows || 0;
+  }
+
+  get rows() {
+    const rows = [];
+
+    for (let r = 0; r < this.height; r++) {
+      rows[r] = [];
+
+      for (let c = 0; c < this.width; c++) rows[r][c] = this[c][r];
+    }
+
+    return rows;
+  }
+
+  get cols() {
+    const cols = [];
+
+    for (let c = 0; c < this.width; c++) {
+      cols[c] = [];
+
+      for (let r = 0; r < this.height; r++) cols[c][r] = this[c][r];
+    }
+
+    return cols;
+  }
+
+  removeRow(index = 0) {
+    for (let c = 0; c < this.width; c++) {
+      this[c].splice(index, 1);
+    }
+
+    this._rows--;
+  }
+
+  insertRow(index = 0) {
+    for (let c = 0; c < this.width; c++) {
+      this[c].splice(index, 0, false);
+    }
+
+    this._rows++;
+  }
+
+  rotate(angle) {
+    const turnsCount = Math.round(angle / 90);
+
+    for (let i = 0; i < Math.abs(turnsCount); i++) {
+      turnsCount > 0 ? this._turnCW() : this._turnCCW();
+    }
+  }
+
+  clear() {
+    for (const [element, c, r] of this) this[c][r] = false;
+  }
+
+  set width(value) {
+    this._resize(value, this.height);
+  }
+
+  set height(value) {
+    this._resize(this.width, value);
+  }
+
+  [Symbol.iterator]() {
+    const matrix = this;
+    let i = 0;
+    return {
+      next() {
+        let c = i % matrix.width;
+        let r = Math.floor(i / matrix.width);
+        i++;
+        return {
+          done: i > matrix.length,
+          value: [matrix[c][r], c, r]
+        };
+      }
+
+    };
+  }
+
+  [Symbol.toStringTag]() {
+    return "matrix";
+  }
+
+  toString() {
+    const matrix = this;
+    let output = "";
+
+    for (let r = 0; r < matrix.height; r++) {
+      output += r === 0 ? "" : "\n";
+
+      for (let c = 0; c < matrix.width; c++) {
+        output += "  " + (matrix[c][r] || 0) + "  ";
+      }
+    }
+
+    return output;
+  }
+
+  _turnCW() {
+    const origMatrix = Matrix.clone(this);
+
+    this._resize(origMatrix.height, origMatrix.width).clear();
+
+    for (const [element, c, r] of this) this[c][this.height - 1 - r] = origMatrix[r][c];
+  }
+
+  _turnCCW() {
+    const origMatrix = Matrix.clone(this);
+
+    this._resize(origMatrix.height, origMatrix.width).clear();
+
+    for (const [element, c, r] of this) this[this.width - 1 - c][r] = origMatrix[r][c];
+  }
+
+  _resize(width, height) {
+    for (let c = 0; c < width; c++) {
+      this[c] = this[c] || [];
+
+      for (let r = 0; r < height; r++) {
+        this[c][r] = this[c][r] || false;
+      }
+    }
+
+    this._cols = width;
+    this._rows = height;
+    return this;
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Matrix);
 
 /***/ }),
 
@@ -46539,9 +46772,11 @@ class SceneDirector {
       const director = this;
       scene.load().then(() => {
         if (director._activeScene) {
-          director._activeScene.ticker.stop();
+          if (director._activeScene.ticker) {
+            director._activeScene.ticker.stop();
 
-          delete director._activeScene.ticker;
+            delete director._activeScene.ticker;
+          }
 
           director._activeScene.destroy();
 
@@ -46549,11 +46784,17 @@ class SceneDirector {
         }
 
         scene.init.apply(scene, args);
-        scene.ticker = new PIXI.ticker.Ticker();
-        scene.ticker.add(dt => {
-          scene.update(dt * 0.01);
-        });
-        scene.ticker.start();
+
+        if (scene.update) {
+          let elapsedTime = 0;
+          scene.ticker = new PIXI.ticker.Ticker();
+          scene.ticker.add(dt => {
+            const dtN = dt * 0.01;
+            elapsedTime += dtN;
+            scene.update(dtN, elapsedTime);
+          });
+          scene.ticker.start();
+        }
 
         director._stage.addChild(scene);
 
@@ -46574,6 +46815,33 @@ class SceneDirector {
 
 _EventDispatcher__WEBPACK_IMPORTED_MODULE_0__["default"].embedInto(SceneDirector);
 /* harmony default export */ __webpack_exports__["default"] = (SceneDirector);
+
+/***/ }),
+
+/***/ "./src/js/components/Vector.js":
+/*!*************************************!*\
+  !*** ./src/js/components/Vector.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var victor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! victor */ "./node_modules/victor/index.js");
+/* harmony import */ var victor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(victor__WEBPACK_IMPORTED_MODULE_0__);
+
+
+
+
+class Vector extends victor__WEBPACK_IMPORTED_MODULE_0__ {
+  set(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Vector);
 
 /***/ }),
 
@@ -46651,8 +46919,6 @@ class Scene extends PIXI.Container {
 
   init(args) {}
 
-  update(deltaTime) {}
-
   destroy() {}
 
   resize(width, height) {}
@@ -46676,4 +46942,5 @@ module.exports = __webpack_require__(/*! ./src/index.js */"./src/index.js");
 /***/ })
 
 /******/ })["default"];
+});
 //# sourceMappingURL=sylvan.js.map

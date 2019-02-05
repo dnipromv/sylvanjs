@@ -21,10 +21,6 @@ class Scene extends PIXI.Container {
         
     }
 
-    update(deltaTime) {
-        
-    }
-
     destroy() {
 
     }
