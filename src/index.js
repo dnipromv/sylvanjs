@@ -6,13 +6,40 @@ import Scene from './js/components/structure/Scene';
 import Vector from './js/components/Vector';
 import Camera from './js/components/Camera';
 import HttpService from './js/components/HttpService';
+import ResourceRegistry from './js/components/ResourceRegistry';
 
-const Sylvan = PIXI;
+function SylvanAPI() {
+    this.Game = Game;
+    this.Scene = Scene;
+    this.Vector = Vector;
+    this.Camera = Camera;
+    this.HttpService = HttpService;
+    this.Sprite = PIXI.Sprite;
+}
 
-Sylvan.Game = Game;
-Sylvan.Scene = Scene;
-Sylvan.Vector = Vector;
-Sylvan.Camera = Camera;
-Sylvan.HttpService = HttpService;
+function Sylvan() {
+    SylvanAPI.call(this);
+}
 
-export default Sylvan;
+Sylvan.__apiIDs = [];
+Sylvan.__apiAliasMap = new Map();
+Sylvan.__resourcesMap = new Map();
+
+Sylvan.prototype.API = function(alias = "") {
+    if (Sylvan.__apiAliasMap.has(alias)) {
+        console.error(alias + " already exists");
+    }
+    else {
+        const apiID = Sylvan.__apiIDs.length;
+        const resourceRegistry = new ResourceRegistry();
+
+        Sylvan.__apiIDs.push(apiID);
+        Sylvan.__apiAliasMap.set(apiID, alias);
+        Sylvan.__resourcesMap.set(apiID, resourceRegistry);
+
+        SylvanAPI.call(this);
+        this.Game.prototype.resources = resourceRegistry;
+    }
+};
+
+export default new Sylvan();

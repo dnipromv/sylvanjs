@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Sylvan basic boilerplate</title>
+        <script src="../../build/sylvan.js"></script>
+    </head>
+    <body>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <script>
+            const Phalangite = new Sylvan.API();
+
+            class MainScene extends Phalangite.Scene {
+                async load() {
+                    await this.loader.load("barbarian.jpg");
+                }
+
+                init() {
+                    this.addChild(new Phalangite.Sprite(this.resources["barbarian.jpg"]));
+                }
+            }
+
+            class Game extends Phalangite.Game {
+                constructor(canvas) {
+                    super(canvas);
+                    this.director.register("Main", MainScene);
+                    this.director.goTo("Main");
+                }
+            }
+
+            const canvas = document.getElementById("gameCanvas");
+            const game = new Game(canvas);
+        </script>
+    </body>
+</html>

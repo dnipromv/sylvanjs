@@ -46054,9 +46054,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_Game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./js/Game */ "./src/js/Game.js");
 /* harmony import */ var _js_components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./js/components/structure/Scene */ "./src/js/components/structure/Scene.js");
 /* harmony import */ var _js_components_Vector__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./js/components/Vector */ "./src/js/components/Vector.js");
-/* harmony import */ var _js_components_Matrix__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./js/components/Matrix */ "./src/js/components/Matrix.js");
-/* harmony import */ var _js_components_Camera__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./js/components/Camera */ "./src/js/components/Camera.js");
-/* harmony import */ var _js_components_HttpService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./js/components/HttpService */ "./src/js/components/HttpService.js");
+/* harmony import */ var _js_components_Camera__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./js/components/Camera */ "./src/js/components/Camera.js");
+/* harmony import */ var _js_components_HttpService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./js/components/HttpService */ "./src/js/components/HttpService.js");
+/* harmony import */ var _js_components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./js/components/ResourceRegistry */ "./src/js/components/ResourceRegistry.js");
 
 
 
@@ -46065,14 +46065,43 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const Sylvan = pixi_js__WEBPACK_IMPORTED_MODULE_0__;
-Sylvan.Game = _js_Game__WEBPACK_IMPORTED_MODULE_2__["default"];
-Sylvan.Scene = _js_components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__["default"];
-Sylvan.Vector = _js_components_Vector__WEBPACK_IMPORTED_MODULE_4__["default"];
-Sylvan.Matrix = _js_components_Matrix__WEBPACK_IMPORTED_MODULE_5__["default"];
-Sylvan.Camera = _js_components_Camera__WEBPACK_IMPORTED_MODULE_6__["default"];
-Sylvan.HttpService = _js_components_HttpService__WEBPACK_IMPORTED_MODULE_7__["default"];
-/* harmony default export */ __webpack_exports__["default"] = (Sylvan);
+
+function SylvanAPI() {
+  this.Game = _js_Game__WEBPACK_IMPORTED_MODULE_2__["default"];
+  this.Scene = _js_components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__["default"];
+  this.Vector = _js_components_Vector__WEBPACK_IMPORTED_MODULE_4__["default"];
+  this.Camera = _js_components_Camera__WEBPACK_IMPORTED_MODULE_5__["default"];
+  this.HttpService = _js_components_HttpService__WEBPACK_IMPORTED_MODULE_6__["default"];
+  this.Sprite = pixi_js__WEBPACK_IMPORTED_MODULE_0__["Sprite"];
+}
+
+function Sylvan() {
+  SylvanAPI.call(this);
+}
+
+Sylvan.__apiIDs = [];
+Sylvan.__apiAliasMap = new Map();
+Sylvan.__resourcesMap = new Map();
+
+Sylvan.prototype.API = function (alias = "") {
+  if (Sylvan.__apiAliasMap.has(alias)) {
+    console.error(alias + " already exists");
+  } else {
+    const apiID = Sylvan.__apiIDs.length;
+    const resourceRegistry = new _js_components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_7__["default"]();
+
+    Sylvan.__apiIDs.push(apiID);
+
+    Sylvan.__apiAliasMap.set(apiID, alias);
+
+    Sylvan.__resourcesMap.set(apiID, resourceRegistry);
+
+    SylvanAPI.call(this);
+    this.Game.prototype.resources = resourceRegistry;
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (new Sylvan());
 
 /***/ }),
 
@@ -46104,9 +46133,9 @@ class Game extends PIXI.Application {
       view: canvas
     });
     this.director = new _components_SceneDirector__WEBPACK_IMPORTED_MODULE_2__["default"](this.stage);
+    this.resources = this.resources || new _components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_0__["default"]();
     this._input = new _components_InputHandler__WEBPACK_IMPORTED_MODULE_3__["default"]();
-    this._resources = new _components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_0__["default"]();
-    this._loader = new _components_ResourceLoader__WEBPACK_IMPORTED_MODULE_1__["default"](this._resources);
+    this._loader = new _components_ResourceLoader__WEBPACK_IMPORTED_MODULE_1__["default"](this.resources);
 
     this._setUpSceneDecorator();
   }
@@ -46117,7 +46146,7 @@ class Game extends PIXI.Application {
   }
 
   load(...urls) {
-    this._loader.load(...urls);
+    this.loader.load(...urls);
   }
 
   _setUpSceneDecorator() {
@@ -46133,16 +46162,12 @@ class Game extends PIXI.Application {
           return game.director;
         }
       });
-      Object.defineProperty(scene, "input", {
-        get: () => {
-          return game._input;
-        }
-      });
       Object.defineProperty(scene, "resources", {
         get: () => {
-          return game._resources;
+          return game.resources;
         }
-      });
+      }); //Object.defineProperty(scene, "input", {get: () => {return game._input}});
+
       Object.defineProperty(scene, "loader", {
         get: () => {
           return game._loader;
@@ -46467,172 +46492,6 @@ class InputHandler {
 
 _EventDispatcher__WEBPACK_IMPORTED_MODULE_0__["default"].embedInto(InputHandler);
 /* harmony default export */ __webpack_exports__["default"] = (InputHandler);
-
-/***/ }),
-
-/***/ "./src/js/components/Matrix.js":
-/*!*************************************!*\
-  !*** ./src/js/components/Matrix.js ***!
-  \*************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-
-class Matrix {
-  constructor(width = 0, height = 0) {
-    this.width = width;
-    this.height = height;
-    this.length = width * height;
-  }
-
-  static clone(matrix) {
-    const clone = new Matrix(matrix.width, matrix.height);
-
-    for (const [element, c, r] of matrix) clone[c][r] = element;
-
-    return clone;
-  }
-
-  get width() {
-    return this._cols || 0;
-  }
-
-  get height() {
-    return this._rows || 0;
-  }
-
-  get rows() {
-    const rows = [];
-
-    for (let r = 0; r < this.height; r++) {
-      rows[r] = [];
-
-      for (let c = 0; c < this.width; c++) rows[r][c] = this[c][r];
-    }
-
-    return rows;
-  }
-
-  get cols() {
-    const cols = [];
-
-    for (let c = 0; c < this.width; c++) {
-      cols[c] = [];
-
-      for (let r = 0; r < this.height; r++) cols[c][r] = this[c][r];
-    }
-
-    return cols;
-  }
-
-  removeRow(index = 0) {
-    for (let c = 0; c < this.width; c++) {
-      this[c].splice(index, 1);
-    }
-
-    this._rows--;
-  }
-
-  insertRow(index = 0) {
-    for (let c = 0; c < this.width; c++) {
-      this[c].splice(index, 0, false);
-    }
-
-    this._rows++;
-  }
-
-  rotate(angle) {
-    const turnsCount = Math.round(angle / 90);
-
-    for (let i = 0; i < Math.abs(turnsCount); i++) {
-      turnsCount > 0 ? this._turnCW() : this._turnCCW();
-    }
-  }
-
-  clear() {
-    for (const [element, c, r] of this) this[c][r] = false;
-  }
-
-  set width(value) {
-    this._resize(value, this.height);
-  }
-
-  set height(value) {
-    this._resize(this.width, value);
-  }
-
-  [Symbol.iterator]() {
-    const matrix = this;
-    let i = 0;
-    return {
-      next() {
-        let c = i % matrix.width;
-        let r = Math.floor(i / matrix.width);
-        i++;
-        return {
-          done: i > matrix.length,
-          value: [matrix[c][r], c, r]
-        };
-      }
-
-    };
-  }
-
-  [Symbol.toStringTag]() {
-    return "matrix";
-  }
-
-  toString() {
-    const matrix = this;
-    let output = "";
-
-    for (let r = 0; r < matrix.height; r++) {
-      output += r === 0 ? "" : "\n";
-
-      for (let c = 0; c < matrix.width; c++) {
-        output += "  " + (matrix[c][r] || 0) + "  ";
-      }
-    }
-
-    return output;
-  }
-
-  _turnCW() {
-    const origMatrix = Matrix.clone(this);
-
-    this._resize(origMatrix.height, origMatrix.width).clear();
-
-    for (const [element, c, r] of this) this[c][this.height - 1 - r] = origMatrix[r][c];
-  }
-
-  _turnCCW() {
-    const origMatrix = Matrix.clone(this);
-
-    this._resize(origMatrix.height, origMatrix.width).clear();
-
-    for (const [element, c, r] of this) this[this.width - 1 - c][r] = origMatrix[r][c];
-  }
-
-  _resize(width, height) {
-    for (let c = 0; c < width; c++) {
-      this[c] = this[c] || [];
-
-      for (let r = 0; r < height; r++) {
-        this[c][r] = this[c][r] || false;
-      }
-    }
-
-    this._cols = width;
-    this._rows = height;
-    return this;
-  }
-
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (Matrix);
 
 /***/ }),
 

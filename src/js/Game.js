@@ -10,10 +10,9 @@ class Game extends PIXI.Application {
         super({ width: canvas.width, height: canvas.height, view: canvas });
 
         this.director = new SceneDirector(this.stage);
-
+        this.resources = this.resources || new ResourceRegistry();
         this._input = new InputHandler();
-        this._resources = new ResourceRegistry();
-        this._loader = new ResourceLoader(this._resources);
+        this._loader = new ResourceLoader(this.resources);
 
         this._setUpSceneDecorator();
     }
@@ -24,7 +23,7 @@ class Game extends PIXI.Application {
     }
 
     load(...urls) {
-        this._loader.load(...urls);
+        this.loader.load(...urls);
     }
 
     _setUpSceneDecorator() {
@@ -32,8 +31,8 @@ class Game extends PIXI.Application {
         this.director.on("sceneCreate", (scene) => {
             Object.defineProperty(scene, "renderer", {get: () => {return game.renderer}});
             Object.defineProperty(scene, "director", {get: () => {return game.director}});
-            Object.defineProperty(scene, "input", {get: () => {return game._input}});
-            Object.defineProperty(scene, "resources", {get: () => {return game._resources}});
+            Object.defineProperty(scene, "resources", {get: () => {return game.resources}});
+            //Object.defineProperty(scene, "input", {get: () => {return game._input}});
             Object.defineProperty(scene, "loader", {get: () => {return game._loader}});
         });
     }
