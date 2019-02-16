@@ -6,35 +6,31 @@
         <script src="../../build/sylvan.js"></script>
     </head>
     <body>
-        <canvas id="gameCanvas1" width="800" height="600"></canvas>
-        <canvas id="gameCanvas2" width="800" height="600"></canvas>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
         <script>
-            function createGame(canvas, texturePath) {
-                const GameAPI = new Sylvan.DevoteAPI();
+            const Phalangite = new Sylvan.DevoteAPI();
 
-                class MainScene extends GameAPI.Scene {
-                    async load() {
-                        await GameAPI.loader.load(texturePath);
-                    }
-
-                    init() {
-                        this.addChild(new GameAPI.Sprite(GameAPI.resources[texturePath]));
-                    }
+            class MainScene extends Phalangite.Scene {
+                async load() {
+                    await Phalangite.loader.load("barbarian.jpg");
+                    await Phalangite.loader.load("knight.jpg");
                 }
 
-                class Game extends GameAPI.Game {
-                    constructor(config) {
-                        super(config);
-                        GameAPI.director.register("Main", MainScene);
-                        GameAPI.director.goTo("Main");
-                    }
+                init() {
+                    this.addChild(new Phalangite.Sprite(Phalangite.resources["barbarian.jpg"]));
                 }
-
-                const game = new Game({canvas: canvas});
             }
 
-            createGame(document.getElementById("gameCanvas1"), "barbarian.jpg");
-            createGame(document.getElementById("gameCanvas2"), "knight.jpg");
+            class Game extends Phalangite.Game {
+                constructor(canvas) {
+                    super(canvas);
+                    this.director.register("Main", MainScene);
+                    this.director.goTo("Main");
+                }
+            }
+
+            const canvas = document.getElementById("gameCanvas");
+            const game = new Game(canvas);
         </script>
     </body>
 </html>

@@ -8,8 +8,13 @@ import Scene from './sceneManagement/Scene';
 import Vector from './components/Vector';
 import Camera from './components/Camera';
 import HttpService from './components/HttpService';
+import ResourceRegistry from "./resourceManagement/ResourceRegistry";
+import ResourceLoader from "./resourceManagement/ResourceLoader";
 
 function SylvanAPI() {
+    this.resources = new ResourceRegistry();
+    this.loader = new ResourceLoader(this.resources);
+
     this.Game = Game;
     this.Scene = Scene;
     this.Vector = Vector;

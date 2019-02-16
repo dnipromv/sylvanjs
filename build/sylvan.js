@@ -46074,11 +46074,7 @@ Sylvan.prototype = Object.create(_js_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SylvanAPI.js */ "./src/js/SylvanAPI.js");
-/* harmony import */ var _resourceManagement_ResourceRegistry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./resourceManagement/ResourceRegistry */ "./src/js/resourceManagement/ResourceRegistry.js");
-/* harmony import */ var _resourceManagement_ResourceLoader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./resourceManagement/ResourceLoader */ "./src/js/resourceManagement/ResourceLoader.js");
-/* harmony import */ var _Game__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Game */ "./src/js/Game.js");
-
-
+/* harmony import */ var _Game__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Game */ "./src/js/Game.js");
 
 
 
@@ -46087,10 +46083,8 @@ __webpack_require__.r(__webpack_exports__);
 function DevoteAPI() {
   _SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["default"].call(this);
   var devoteAPI = this;
-  this.resources = new _resourceManagement_ResourceRegistry__WEBPACK_IMPORTED_MODULE_1__["default"]();
-  this.loader = new _resourceManagement_ResourceLoader__WEBPACK_IMPORTED_MODULE_2__["default"](this.resources);
 
-  class DevoteGame extends _Game__WEBPACK_IMPORTED_MODULE_3__["default"] {
+  class DevoteGame extends _Game__WEBPACK_IMPORTED_MODULE_1__["default"] {
     constructor(config) {
       super(config);
       devoteAPI.director = this.director;
@@ -46185,6 +46179,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Vector__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/Vector */ "./src/js/components/Vector.js");
 /* harmony import */ var _components_Camera__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/Camera */ "./src/js/components/Camera.js");
 /* harmony import */ var _components_HttpService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/HttpService */ "./src/js/components/HttpService.js");
+/* harmony import */ var _resourceManagement_ResourceRegistry__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./resourceManagement/ResourceRegistry */ "./src/js/resourceManagement/ResourceRegistry.js");
+/* harmony import */ var _resourceManagement_ResourceLoader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./resourceManagement/ResourceLoader */ "./src/js/resourceManagement/ResourceLoader.js");
+
+
 
 
 
@@ -46196,6 +46194,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function SylvanAPI() {
+  this.resources = new _resourceManagement_ResourceRegistry__WEBPACK_IMPORTED_MODULE_7__["default"]();
+  this.loader = new _resourceManagement_ResourceLoader__WEBPACK_IMPORTED_MODULE_8__["default"](this.resources);
   this.Game = _Game__WEBPACK_IMPORTED_MODULE_2__["default"];
   this.Scene = _sceneManagement_Scene__WEBPACK_IMPORTED_MODULE_3__["default"];
   this.Vector = _components_Vector__WEBPACK_IMPORTED_MODULE_4__["default"];
