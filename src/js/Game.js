@@ -10,9 +10,7 @@ class Game extends PIXI.Application {
         super({ width: canvas.width, height: canvas.height, view: canvas });
 
         this.director = new SceneDirector(this.stage);
-        this.resources = this.resources || new ResourceRegistry();
         this._input = new InputHandler();
-        this._loader = new ResourceLoader(this.resources);
 
         this._setUpSceneDecorator();
     }

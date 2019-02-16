@@ -46047,61 +46047,49 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.js");
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(pixi_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var pixi_tilemap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi-tilemap */ "./node_modules/pixi-tilemap/dist/pixi-tilemap.js");
-/* harmony import */ var pixi_tilemap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(pixi_tilemap__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _js_Game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./js/Game */ "./src/js/Game.js");
-/* harmony import */ var _js_components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./js/components/structure/Scene */ "./src/js/components/structure/Scene.js");
-/* harmony import */ var _js_components_Vector__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./js/components/Vector */ "./src/js/components/Vector.js");
-/* harmony import */ var _js_components_Camera__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./js/components/Camera */ "./src/js/components/Camera.js");
-/* harmony import */ var _js_components_HttpService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./js/components/HttpService */ "./src/js/components/HttpService.js");
-/* harmony import */ var _js_components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./js/components/ResourceRegistry */ "./src/js/components/ResourceRegistry.js");
+/* harmony import */ var _js_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./js/SylvanAPI.js */ "./src/js/SylvanAPI.js");
+/* harmony import */ var _js_DevoteAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./js/DevoteAPI.js */ "./src/js/DevoteAPI.js");
 
 
 
 
-
-
-
-
-
-function SylvanAPI() {
-  this.Game = _js_Game__WEBPACK_IMPORTED_MODULE_2__["default"];
-  this.Scene = _js_components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__["default"];
-  this.Vector = _js_components_Vector__WEBPACK_IMPORTED_MODULE_4__["default"];
-  this.Camera = _js_components_Camera__WEBPACK_IMPORTED_MODULE_5__["default"];
-  this.HttpService = _js_components_HttpService__WEBPACK_IMPORTED_MODULE_6__["default"];
-  this.Sprite = pixi_js__WEBPACK_IMPORTED_MODULE_0__["Sprite"];
-}
 
 function Sylvan() {
-  SylvanAPI.call(this);
+  _js_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["default"].call(this);
+  this.DevoteAPI = _js_DevoteAPI_js__WEBPACK_IMPORTED_MODULE_1__["default"];
 }
 
-Sylvan.__apiIDs = [];
-Sylvan.__apiAliasMap = new Map();
-Sylvan.__resourcesMap = new Map();
-
-Sylvan.prototype.API = function (alias = "") {
-  if (Sylvan.__apiAliasMap.has(alias)) {
-    console.error(alias + " already exists");
-  } else {
-    const apiID = Sylvan.__apiIDs.length;
-    const resourceRegistry = new _js_components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_7__["default"]();
-
-    Sylvan.__apiIDs.push(apiID);
-
-    Sylvan.__apiAliasMap.set(apiID, alias);
-
-    Sylvan.__resourcesMap.set(apiID, resourceRegistry);
-
-    SylvanAPI.call(this);
-    this.Game.prototype.resources = resourceRegistry;
-  }
-};
-
+Sylvan.prototype = Object.create(_js_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["default"].prototype);
 /* harmony default export */ __webpack_exports__["default"] = (new Sylvan());
+
+/***/ }),
+
+/***/ "./src/js/DevoteAPI.js":
+/*!*****************************!*\
+  !*** ./src/js/DevoteAPI.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SylvanAPI.js */ "./src/js/SylvanAPI.js");
+/* harmony import */ var _components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/ResourceRegistry */ "./src/js/components/ResourceRegistry.js");
+/* harmony import */ var _components_ResourceLoader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/ResourceLoader */ "./src/js/components/ResourceLoader.js");
+
+
+
+
+
+
+function DevoteAPI() {
+  _SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["default"].call(this);
+  this.resources = new _components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_1__["default"]();
+  this.loader = new _components_ResourceLoader__WEBPACK_IMPORTED_MODULE_2__["default"](this.resources);
+}
+
+DevoteAPI.prototype = Object.create(_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["default"].prototype);
+/* harmony default export */ __webpack_exports__["default"] = (DevoteAPI);
 
 /***/ }),
 
@@ -46133,9 +46121,7 @@ class Game extends PIXI.Application {
       view: canvas
     });
     this.director = new _components_SceneDirector__WEBPACK_IMPORTED_MODULE_2__["default"](this.stage);
-    this.resources = this.resources || new _components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_0__["default"]();
     this._input = new _components_InputHandler__WEBPACK_IMPORTED_MODULE_3__["default"]();
-    this._loader = new _components_ResourceLoader__WEBPACK_IMPORTED_MODULE_1__["default"](this.resources);
 
     this._setUpSceneDecorator();
   }
@@ -46179,6 +46165,47 @@ class Game extends PIXI.Application {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (Game);
+
+/***/ }),
+
+/***/ "./src/js/SylvanAPI.js":
+/*!*****************************!*\
+  !*** ./src/js/SylvanAPI.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/index.js");
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(pixi_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var pixi_tilemap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi-tilemap */ "./node_modules/pixi-tilemap/dist/pixi-tilemap.js");
+/* harmony import */ var pixi_tilemap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(pixi_tilemap__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Game */ "./src/js/Game.js");
+/* harmony import */ var _components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/structure/Scene */ "./src/js/components/structure/Scene.js");
+/* harmony import */ var _components_Vector__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/Vector */ "./src/js/components/Vector.js");
+/* harmony import */ var _components_Camera__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/Camera */ "./src/js/components/Camera.js");
+/* harmony import */ var _components_HttpService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/HttpService */ "./src/js/components/HttpService.js");
+
+
+
+
+
+
+
+
+
+
+function SylvanAPI() {
+  this.Game = _Game__WEBPACK_IMPORTED_MODULE_2__["default"];
+  this.Scene = _components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__["default"];
+  this.Vector = _components_Vector__WEBPACK_IMPORTED_MODULE_4__["default"];
+  this.Camera = _components_Camera__WEBPACK_IMPORTED_MODULE_5__["default"];
+  this.HttpService = _components_HttpService__WEBPACK_IMPORTED_MODULE_6__["default"];
+}
+
+SylvanAPI.prototype = pixi_js__WEBPACK_IMPORTED_MODULE_0__;
+/* harmony default export */ __webpack_exports__["default"] = (SylvanAPI);
 
 /***/ }),
 
