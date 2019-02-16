@@ -1,6 +1,6 @@
 "use strict";
 
-import EventDispatcher from "./EventDispatcher";
+import EventDispatcher from "../components/EventDispatcher";
 
 class SceneDirector {
     constructor(stage) {

@@ -3,7 +3,6 @@
 class ResourceLoader extends PIXI.loaders.Loader {
     constructor(resourceRegistry) {
         super();
-
         this._resourceRegistry = resourceRegistry;
     }
 

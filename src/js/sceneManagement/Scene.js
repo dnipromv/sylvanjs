@@ -6,8 +6,6 @@ class Scene extends PIXI.Container {
         
         // References inserted to scene immediately after its creation
         this.renderer = null; // PIXI renderer
-        this.resources = null; // ResourceRegistry
-        this.loader = null; // ResourceLoader
         this.director = null; // SceneDirector
     }
 

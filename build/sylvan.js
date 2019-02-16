@@ -46074,8 +46074,10 @@ Sylvan.prototype = Object.create(_js_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SylvanAPI.js */ "./src/js/SylvanAPI.js");
-/* harmony import */ var _components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/ResourceRegistry */ "./src/js/components/ResourceRegistry.js");
-/* harmony import */ var _components_ResourceLoader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/ResourceLoader */ "./src/js/components/ResourceLoader.js");
+/* harmony import */ var _resourceManagement_ResourceRegistry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./resourceManagement/ResourceRegistry */ "./src/js/resourceManagement/ResourceRegistry.js");
+/* harmony import */ var _resourceManagement_ResourceLoader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./resourceManagement/ResourceLoader */ "./src/js/resourceManagement/ResourceLoader.js");
+/* harmony import */ var _Game__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Game */ "./src/js/Game.js");
+
 
 
 
@@ -46084,8 +46086,21 @@ __webpack_require__.r(__webpack_exports__);
 
 function DevoteAPI() {
   _SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["default"].call(this);
-  this.resources = new _components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_1__["default"]();
-  this.loader = new _components_ResourceLoader__WEBPACK_IMPORTED_MODULE_2__["default"](this.resources);
+  var devoteAPI = this;
+  this.resources = new _resourceManagement_ResourceRegistry__WEBPACK_IMPORTED_MODULE_1__["default"]();
+  this.loader = new _resourceManagement_ResourceLoader__WEBPACK_IMPORTED_MODULE_2__["default"](this.resources);
+
+  class DevoteGame extends _Game__WEBPACK_IMPORTED_MODULE_3__["default"] {
+    constructor(config) {
+      super(config);
+      devoteAPI.director = this.director;
+      devoteAPI.renderer = this.renderer;
+    }
+
+  }
+
+  ;
+  this.Game = DevoteGame;
 }
 
 DevoteAPI.prototype = Object.create(_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["default"].prototype);
@@ -46102,9 +46117,9 @@ DevoteAPI.prototype = Object.create(_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_ResourceRegistry__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/ResourceRegistry */ "./src/js/components/ResourceRegistry.js");
-/* harmony import */ var _components_ResourceLoader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/ResourceLoader */ "./src/js/components/ResourceLoader.js");
-/* harmony import */ var _components_SceneDirector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/SceneDirector */ "./src/js/components/SceneDirector.js");
+/* harmony import */ var _resourceManagement_ResourceRegistry__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./resourceManagement/ResourceRegistry */ "./src/js/resourceManagement/ResourceRegistry.js");
+/* harmony import */ var _resourceManagement_ResourceLoader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./resourceManagement/ResourceLoader */ "./src/js/resourceManagement/ResourceLoader.js");
+/* harmony import */ var _sceneManagement_SceneDirector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sceneManagement/SceneDirector */ "./src/js/sceneManagement/SceneDirector.js");
 /* harmony import */ var _components_InputHandler__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/InputHandler */ "./src/js/components/InputHandler.js");
 
 
@@ -46114,14 +46129,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Game extends PIXI.Application {
-  constructor(canvas) {
+  constructor(config) {
     super({
-      width: canvas.width,
-      height: canvas.height,
-      view: canvas
+      view: config.canvas,
+      width: config.canvas.width,
+      height: config.canvas.height
     });
-    this.director = new _components_SceneDirector__WEBPACK_IMPORTED_MODULE_2__["default"](this.stage);
-    this._input = new _components_InputHandler__WEBPACK_IMPORTED_MODULE_3__["default"]();
+    this.director = new _sceneManagement_SceneDirector__WEBPACK_IMPORTED_MODULE_2__["default"](this.stage);
 
     this._setUpSceneDecorator();
   }
@@ -46129,10 +46143,6 @@ class Game extends PIXI.Application {
   refresh() {
     this.renderer.resize(this.view.width, this.view.height);
     this.director.resize(this.renderer.width, this.renderer.height);
-  }
-
-  load(...urls) {
-    this.loader.load(...urls);
   }
 
   _setUpSceneDecorator() {
@@ -46146,17 +46156,6 @@ class Game extends PIXI.Application {
       Object.defineProperty(scene, "director", {
         get: () => {
           return game.director;
-        }
-      });
-      Object.defineProperty(scene, "resources", {
-        get: () => {
-          return game.resources;
-        }
-      }); //Object.defineProperty(scene, "input", {get: () => {return game._input}});
-
-      Object.defineProperty(scene, "loader", {
-        get: () => {
-          return game._loader;
         }
       });
     });
@@ -46182,7 +46181,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var pixi_tilemap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pixi-tilemap */ "./node_modules/pixi-tilemap/dist/pixi-tilemap.js");
 /* harmony import */ var pixi_tilemap__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(pixi_tilemap__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _Game__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Game */ "./src/js/Game.js");
-/* harmony import */ var _components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/structure/Scene */ "./src/js/components/structure/Scene.js");
+/* harmony import */ var _sceneManagement_Scene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./sceneManagement/Scene */ "./src/js/sceneManagement/Scene.js");
 /* harmony import */ var _components_Vector__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/Vector */ "./src/js/components/Vector.js");
 /* harmony import */ var _components_Camera__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/Camera */ "./src/js/components/Camera.js");
 /* harmony import */ var _components_HttpService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/HttpService */ "./src/js/components/HttpService.js");
@@ -46198,13 +46197,13 @@ __webpack_require__.r(__webpack_exports__);
 
 function SylvanAPI() {
   this.Game = _Game__WEBPACK_IMPORTED_MODULE_2__["default"];
-  this.Scene = _components_structure_Scene__WEBPACK_IMPORTED_MODULE_3__["default"];
+  this.Scene = _sceneManagement_Scene__WEBPACK_IMPORTED_MODULE_3__["default"];
   this.Vector = _components_Vector__WEBPACK_IMPORTED_MODULE_4__["default"];
   this.Camera = _components_Camera__WEBPACK_IMPORTED_MODULE_5__["default"];
   this.HttpService = _components_HttpService__WEBPACK_IMPORTED_MODULE_6__["default"];
 }
 
-SylvanAPI.prototype = pixi_js__WEBPACK_IMPORTED_MODULE_0__;
+SylvanAPI.prototype = Object.create(pixi_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony default export */ __webpack_exports__["default"] = (SylvanAPI);
 
 /***/ }),
@@ -46522,188 +46521,6 @@ _EventDispatcher__WEBPACK_IMPORTED_MODULE_0__["default"].embedInto(InputHandler)
 
 /***/ }),
 
-/***/ "./src/js/components/ResourceLoader.js":
-/*!*********************************************!*\
-  !*** ./src/js/components/ResourceLoader.js ***!
-  \*********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-
-class ResourceLoader extends PIXI.loaders.Loader {
-  constructor(resourceRegistry) {
-    super();
-    this._resourceRegistry = resourceRegistry;
-  }
-
-  async load(...urls) {
-    return new Promise((resolve, reject) => {
-      for (const url of urls) {
-        if (!this._resourceRegistry.contains(url)) {
-          this.add(url);
-        }
-      }
-
-      this.onError.add(reject);
-      PIXI.loaders.Loader.prototype.load.call(this, (loader, resources) => {
-        for (const alias in resources) {
-          if (resources.hasOwnProperty(alias)) {
-            this._resourceRegistry.store(alias, resources[alias]);
-          }
-        }
-
-        resolve();
-      });
-    });
-  }
-
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (ResourceLoader);
-
-/***/ }),
-
-/***/ "./src/js/components/ResourceRegistry.js":
-/*!***********************************************!*\
-  !*** ./src/js/components/ResourceRegistry.js ***!
-  \***********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-
-class ResourceRegistry {
-  constructor() {}
-
-  store(alias, resource) {
-    this[alias] = this._parseResource(resource);
-  }
-
-  contains(alias) {
-    return !!this[alias];
-  }
-
-  _parseResource(resource) {
-    switch (resource.type) {
-      case PIXI.loaders.Resource.TYPE.IMAGE:
-        if (resource.spritesheet) {
-          return resource.spritesheet;
-        } else {
-          return resource.texture;
-        }
-
-      case PIXI.loaders.Resource.TYPE.AUDIO:
-        return resource;
-
-      case PIXI.loaders.Resource.TYPE.VIDEO:
-        return resource;
-
-      case PIXI.loaders.Resource.TYPE.JSON:
-        return resource;
-
-      case PIXI.loaders.Resource.TYPE.XML:
-        return resource;
-
-      case PIXI.loaders.Resource.TYPE.TEXT:
-        return resource;
-
-      default:
-        return resource;
-    }
-  }
-
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (ResourceRegistry);
-
-/***/ }),
-
-/***/ "./src/js/components/SceneDirector.js":
-/*!********************************************!*\
-  !*** ./src/js/components/SceneDirector.js ***!
-  \********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _EventDispatcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EventDispatcher */ "./src/js/components/EventDispatcher.js");
-
-
-
-
-class SceneDirector {
-  constructor(stage) {
-    this._stage = stage;
-    this._sceneConstructors = {};
-    this._activeScene = null;
-    this._nextScene = null;
-  }
-
-  register(alias, SceneConstructor) {
-    this._sceneConstructors[alias] = SceneConstructor;
-  }
-
-  goTo(alias, args) {
-    const Scene = this._sceneConstructors[alias];
-
-    if (Scene) {
-      const scene = new Scene();
-      this.emit("sceneCreate", [scene]);
-      const director = this;
-      scene.load().then(() => {
-        if (director._activeScene) {
-          if (director._activeScene.ticker) {
-            director._activeScene.ticker.stop();
-
-            delete director._activeScene.ticker;
-          }
-
-          director._activeScene.destroy();
-
-          director._stage.removeChild(director._activeScene);
-        }
-
-        scene.init.apply(scene, args);
-
-        if (scene.update) {
-          let elapsedTime = 0;
-          scene.ticker = new PIXI.ticker.Ticker();
-          scene.ticker.add(dt => {
-            const dtN = dt * 0.01;
-            elapsedTime += dtN;
-            scene.update(dtN, elapsedTime);
-          });
-          scene.ticker.start();
-        }
-
-        director._stage.addChild(scene);
-
-        director._activeScene = scene;
-      });
-    } else {
-      console.error("Scene alias \"" + alias + "\" is not registered.");
-    }
-  }
-
-  resize(width, height) {
-    if (this._activeScene) {
-      this._activeScene.resize(width, height);
-    }
-  }
-
-}
-
-_EventDispatcher__WEBPACK_IMPORTED_MODULE_0__["default"].embedInto(SceneDirector);
-/* harmony default export */ __webpack_exports__["default"] = (SceneDirector);
-
-/***/ }),
-
 /***/ "./src/js/components/Vector.js":
 /*!*************************************!*\
   !*** ./src/js/components/Vector.js ***!
@@ -46773,10 +46590,111 @@ class Interface {
 
 /***/ }),
 
-/***/ "./src/js/components/structure/Scene.js":
-/*!**********************************************!*\
-  !*** ./src/js/components/structure/Scene.js ***!
-  \**********************************************/
+/***/ "./src/js/resourceManagement/ResourceLoader.js":
+/*!*****************************************************!*\
+  !*** ./src/js/resourceManagement/ResourceLoader.js ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+class ResourceLoader extends PIXI.loaders.Loader {
+  constructor(resourceRegistry) {
+    super();
+    this._resourceRegistry = resourceRegistry;
+  }
+
+  async load(...urls) {
+    return new Promise((resolve, reject) => {
+      for (const url of urls) {
+        if (!this._resourceRegistry.contains(url)) {
+          this.add(url);
+        }
+      }
+
+      this.onError.add(reject);
+      PIXI.loaders.Loader.prototype.load.call(this, (loader, resources) => {
+        for (const alias in resources) {
+          if (resources.hasOwnProperty(alias)) {
+            this._resourceRegistry.store(alias, resources[alias]);
+          }
+        }
+
+        resolve();
+      });
+    });
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (ResourceLoader);
+
+/***/ }),
+
+/***/ "./src/js/resourceManagement/ResourceRegistry.js":
+/*!*******************************************************!*\
+  !*** ./src/js/resourceManagement/ResourceRegistry.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+class ResourceRegistry {
+  constructor() {}
+
+  store(alias, resource) {
+    this[alias] = this._parseResource(resource);
+  }
+
+  contains(alias) {
+    return !!this[alias];
+  }
+
+  _parseResource(resource) {
+    switch (resource.type) {
+      case PIXI.loaders.Resource.TYPE.IMAGE:
+        if (resource.spritesheet) {
+          return resource.spritesheet;
+        } else {
+          return resource.texture;
+        }
+
+      case PIXI.loaders.Resource.TYPE.AUDIO:
+        return resource;
+
+      case PIXI.loaders.Resource.TYPE.VIDEO:
+        return resource;
+
+      case PIXI.loaders.Resource.TYPE.JSON:
+        return resource;
+
+      case PIXI.loaders.Resource.TYPE.XML:
+        return resource;
+
+      case PIXI.loaders.Resource.TYPE.TEXT:
+        return resource;
+
+      default:
+        return resource;
+    }
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (ResourceRegistry);
+
+/***/ }),
+
+/***/ "./src/js/sceneManagement/Scene.js":
+/*!*****************************************!*\
+  !*** ./src/js/sceneManagement/Scene.js ***!
+  \*****************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -46789,10 +46707,6 @@ class Scene extends PIXI.Container {
     super(); // References inserted to scene immediately after its creation
 
     this.renderer = null; // PIXI renderer
-
-    this.resources = null; // ResourceRegistry
-
-    this.loader = null; // ResourceLoader
 
     this.director = null; // SceneDirector
   }
@@ -46812,6 +46726,87 @@ class Scene extends PIXI.Container {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (Scene);
+
+/***/ }),
+
+/***/ "./src/js/sceneManagement/SceneDirector.js":
+/*!*************************************************!*\
+  !*** ./src/js/sceneManagement/SceneDirector.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _components_EventDispatcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/EventDispatcher */ "./src/js/components/EventDispatcher.js");
+
+
+
+
+class SceneDirector {
+  constructor(stage) {
+    this._stage = stage;
+    this._sceneConstructors = {};
+    this._activeScene = null;
+    this._nextScene = null;
+  }
+
+  register(alias, SceneConstructor) {
+    this._sceneConstructors[alias] = SceneConstructor;
+  }
+
+  goTo(alias, args) {
+    const Scene = this._sceneConstructors[alias];
+
+    if (Scene) {
+      const scene = new Scene();
+      this.emit("sceneCreate", [scene]);
+      const director = this;
+      scene.load().then(() => {
+        if (director._activeScene) {
+          if (director._activeScene.ticker) {
+            director._activeScene.ticker.stop();
+
+            delete director._activeScene.ticker;
+          }
+
+          director._activeScene.destroy();
+
+          director._stage.removeChild(director._activeScene);
+        }
+
+        scene.init.apply(scene, args);
+
+        if (scene.update) {
+          let elapsedTime = 0;
+          scene.ticker = new PIXI.ticker.Ticker();
+          scene.ticker.add(dt => {
+            const dtN = dt * 0.01;
+            elapsedTime += dtN;
+            scene.update(dtN, elapsedTime);
+          });
+          scene.ticker.start();
+        }
+
+        director._stage.addChild(scene);
+
+        director._activeScene = scene;
+      });
+    } else {
+      console.error("Scene alias \"" + alias + "\" is not registered.");
+    }
+  }
+
+  resize(width, height) {
+    if (this._activeScene) {
+      this._activeScene.resize(width, height);
+    }
+  }
+
+}
+
+_components_EventDispatcher__WEBPACK_IMPORTED_MODULE_0__["default"].embedInto(SceneDirector);
+/* harmony default export */ __webpack_exports__["default"] = (SceneDirector);
 
 /***/ }),
 
