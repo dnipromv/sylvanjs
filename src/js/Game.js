@@ -1,15 +1,16 @@
 "use strict";
 
 import ResourceRegistry from "./resourceManagement/ResourceRegistry";
-import ResourceLoader from "./resourceManagement/ResourceLoader";
+import TimerSystem from "./timer/TimerSystem";
 import SceneDirector from "./sceneManagement/SceneDirector";
 import InputHandler from "./components/InputHandler";
 
 class Game extends PIXI.Application {
     constructor(config) {
         super({view: config.canvas, width: config.canvas.width, height: config.canvas.height});
-
+        
         this.director = new SceneDirector(this.stage);
+        this.timer = new TimerSystem(this._ticker);
 
         this._setUpSceneDecorator();
     }

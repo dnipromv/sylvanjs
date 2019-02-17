@@ -17,7 +17,12 @@
                 }
 
                 init() {
-                    this.addChild(new Phalangite.Sprite(Phalangite.resources["barbarian.jpg"]));
+                    var sprite = new Phalangite.Sprite(Phalangite.resources["barbarian.jpg"]);
+                    Phalangite.timer.delay(() => {
+                        sprite.texture = Phalangite.resources["knight.jpg"];
+                    }, 1);
+                    
+                    this.addChild(sprite);
                 }
             }
 
@@ -28,9 +33,8 @@
                     this.director.goTo("Main");
                 }
             }
-
-            const canvas = document.getElementById("gameCanvas");
-            const game = new Game(canvas);
+            
+            const game = new Game({canvas: document.getElementById("gameCanvas")});
         </script>
     </body>
 </html>

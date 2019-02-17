@@ -25,12 +25,11 @@
     "mini-css-extract-plugin": "^0.4.4",
     "node-sass": "^4.10.0",
     "transform-loader": "^0.2.4",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.9"
+    "webpack": "^4.20.2"
   },
   "dependencies": {
     "@babel/runtime": "^7.1.5",
+    "animejs": "^3.0.1",
     "pixi-tilemap": "^1.2.4",
     "pixi.js": "^4.8.2",
     "victor": "^1.1.0"

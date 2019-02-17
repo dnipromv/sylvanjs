@@ -46088,6 +46088,7 @@ function DevoteAPI() {
     constructor(config) {
       super(config);
       devoteAPI.director = this.director;
+      devoteAPI.timer = this.timer;
       devoteAPI.renderer = this.renderer;
     }
 
@@ -46112,7 +46113,7 @@ DevoteAPI.prototype = Object.create(_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _resourceManagement_ResourceRegistry__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./resourceManagement/ResourceRegistry */ "./src/js/resourceManagement/ResourceRegistry.js");
-/* harmony import */ var _resourceManagement_ResourceLoader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./resourceManagement/ResourceLoader */ "./src/js/resourceManagement/ResourceLoader.js");
+/* harmony import */ var _timer_TimerSystem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./timer/TimerSystem */ "./src/js/timer/TimerSystem.js");
 /* harmony import */ var _sceneManagement_SceneDirector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sceneManagement/SceneDirector */ "./src/js/sceneManagement/SceneDirector.js");
 /* harmony import */ var _components_InputHandler__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/InputHandler */ "./src/js/components/InputHandler.js");
 
@@ -46130,6 +46131,7 @@ class Game extends PIXI.Application {
       height: config.canvas.height
     });
     this.director = new _sceneManagement_SceneDirector__WEBPACK_IMPORTED_MODULE_2__["default"](this.stage);
+    this.timer = new _timer_TimerSystem__WEBPACK_IMPORTED_MODULE_1__["default"](this._ticker);
 
     this._setUpSceneDecorator();
   }
@@ -46807,6 +46809,94 @@ class SceneDirector {
 
 _components_EventDispatcher__WEBPACK_IMPORTED_MODULE_0__["default"].embedInto(SceneDirector);
 /* harmony default export */ __webpack_exports__["default"] = (SceneDirector);
+
+/***/ }),
+
+/***/ "./src/js/timer/Delay.js":
+/*!*******************************!*\
+  !*** ./src/js/timer/Delay.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+class Delay {
+  constructor(ticker, callback, finishTime) {
+    this._ticker = ticker;
+    this._callback = callback;
+    this._finishTime = finishTime;
+    this._elapsedTime = 0;
+
+    this._ticker.add(this._tickerUpdate, this);
+  }
+
+  finish() {
+    this.cancel();
+
+    this._callback();
+  }
+
+  cancel() {
+    this._ticker.remove(this._tickerUpdate, this);
+  }
+
+  _tickerUpdate(deltaTime) {
+    this._elapsedTime += deltaTime * 0.01;
+
+    if (this._elapsedTime >= this._finishTime) {
+      this._ticker.remove(this._tickerUpdate, this);
+
+      this._callback();
+    }
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Delay);
+
+/***/ }),
+
+/***/ "./src/js/timer/TimerSystem.js":
+/*!*************************************!*\
+  !*** ./src/js/timer/TimerSystem.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Delay_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Delay.js */ "./src/js/timer/Delay.js");
+
+
+
+
+class TimerSystem {
+  constructor(ticker) {
+    this._ticker = ticker;
+  }
+
+  delay(callback, delayTime) {
+    return new _Delay_js__WEBPACK_IMPORTED_MODULE_0__["default"](this._ticker, callback, delayTime);
+  }
+
+  cancel(artifact) {
+    if (artifact.cancel) {
+      artifact.cancel();
+    }
+  }
+
+  finish(artifact) {
+    if (artifact.finish) {
+      artifact.finish();
+    }
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (TimerSystem);
 
 /***/ }),
 
