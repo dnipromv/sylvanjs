@@ -46824,7 +46824,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Delay {
-  constructor(ticker, callback, finishTime) {
+  constructor(ticker, callback, finishTime = 1) {
     this._ticker = ticker;
     this._callback = callback;
     this._finishTime = finishTime;
@@ -46859,6 +46859,59 @@ class Delay {
 
 /***/ }),
 
+/***/ "./src/js/timer/Repeat.js":
+/*!********************************!*\
+  !*** ./src/js/timer/Repeat.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+class Repeat {
+  constructor(ticker, callback, intervalTime = 1, finalIteration = -1) {
+    this._ticker = ticker;
+    this._callback = callback;
+    this._intervalTime = intervalTime;
+    this._finalIteration = finalIteration;
+    this._elapsedTime = 0;
+    this._currentIteration = 0;
+
+    this._ticker.add(this._tickerUpdate, this);
+  }
+
+  finish() {
+    this.cancel();
+
+    this._callback();
+  }
+
+  cancel() {
+    this._ticker.remove(this._tickerUpdate, this);
+  }
+
+  _tickerUpdate(deltaTime) {
+    this._elapsedTime += deltaTime * 0.01;
+
+    if (this._elapsedTime >= this._intervalTime * (this._currentIteration + 1)) {
+      this._callback(this._currentIteration);
+
+      this._currentIteration++;
+
+      if (this._finalIteration >= 0 && this._currentIteration > this._finalIteration) {
+        this._ticker.remove(this._tickerUpdate, this);
+      }
+    }
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Repeat);
+
+/***/ }),
+
 /***/ "./src/js/timer/TimerSystem.js":
 /*!*************************************!*\
   !*** ./src/js/timer/TimerSystem.js ***!
@@ -46869,6 +46922,8 @@ class Delay {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Delay_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Delay.js */ "./src/js/timer/Delay.js");
+/* harmony import */ var _Repeat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Repeat.js */ "./src/js/timer/Repeat.js");
+
 
 
 
@@ -46880,6 +46935,10 @@ class TimerSystem {
 
   delay(callback, delayTime) {
     return new _Delay_js__WEBPACK_IMPORTED_MODULE_0__["default"](this._ticker, callback, delayTime);
+  }
+
+  repeat(callback, intervalTime, iterations) {
+    return new _Repeat_js__WEBPACK_IMPORTED_MODULE_1__["default"](this._ticker, callback, intervalTime, iterations);
   }
 
   cancel(artifact) {

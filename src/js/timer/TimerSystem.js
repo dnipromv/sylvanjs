@@ -8,8 +8,12 @@ class TimerSystem {
         this._ticker = ticker;
     }
 
-    delay(callback, delayTime = 1) {
+    delay(callback, delayTime) {
         return new Delay(this._ticker, callback, delayTime);
+    }
+
+    repeat(callback, intervalTime, iterations) {
+        return new Repeat(this._ticker, callback, intervalTime, iterations);
     }
 
     cancel(artifact) {

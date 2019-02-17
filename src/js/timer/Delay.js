@@ -1,7 +1,7 @@
 "use strict";
 
 class Delay {
-    constructor(ticker, callback, finishTime) {
+    constructor(ticker, callback, finishTime = 1) {
         this._ticker = ticker;
         this._callback = callback;
         this._finishTime = finishTime;
