@@ -13,6 +13,7 @@ function DevoteAPI() {
             super(config);
             devoteAPI.director = this.director;
             devoteAPI.timer = this.timer;
+            devoteAPI.tween = this.tween;
             devoteAPI.renderer = this.renderer;
         }
     };

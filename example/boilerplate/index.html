@@ -18,12 +18,9 @@
 
                 init() {
                     var sprite = new Phalangite.Sprite(Phalangite.resources["barbarian.jpg"]);
-
-                    Phalangite.timer.repeat((iteration) => {
-                        const textureName = iteration % 2 === 0 ? "knight.jpg" : "barbarian.jpg";
-                        sprite.texture = Phalangite.resources[textureName];
-                    }, 1);
                     
+                    Phalangite.tween.to(sprite, 1, {alpha: 0, easing: Phalangite.EASING.CUBIC_OUT});
+
                     this.addChild(sprite);
                 }
             }

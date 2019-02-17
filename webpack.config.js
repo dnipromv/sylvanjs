@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const MODULE_PATH = {
     PIXI: path.join(__dirname, 'node_modules', 'pixi.js'),
     PIXI_TILEMAP: path.join(__dirname, 'node_modules', 'pixi-tilemap'),
+    ANIME: path.join(__dirname, 'node_modules', 'animejs'),
     VICTOR: path.join(__dirname, 'node_modules', 'victor')
 }
 
@@ -51,6 +52,7 @@ module.exports = {
         alias: {
           'pixi.js': MODULE_PATH.PIXI,
           'pixi-tilemap': MODULE_PATH.PIXI_TILEMAP,
+          'animejs': MODULE_PATH.ANIME,
           'victor': MODULE_PATH.VICTOR
         }
     },

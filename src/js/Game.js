@@ -1,7 +1,7 @@
 "use strict";
 
-import ResourceRegistry from "./resourceManagement/ResourceRegistry";
 import TimerSystem from "./timer/TimerSystem";
+import TweenSystem from "./animation/TweenSystem";
 import SceneDirector from "./sceneManagement/SceneDirector";
 import InputHandler from "./components/InputHandler";
 
@@ -11,6 +11,7 @@ class Game extends PIXI.Application {
         
         this.director = new SceneDirector(this.stage);
         this.timer = new TimerSystem(this._ticker);
+        this.tween = new TweenSystem(this._ticker);
 
         this._setUpSceneDecorator();
     }
