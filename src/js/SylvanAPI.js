@@ -1,7 +1,6 @@
 "use strict";
 
 import * as PIXI from 'pixi.js';
-import * as Tilemap from 'pixi-tilemap';
 
 import Game from './Game';
 import Scene from './sceneManagement/Scene';
@@ -14,8 +13,8 @@ import ResourceLoader from "./resourceManagement/ResourceLoader";
 import EASING from './animation/EASING';
 
 function SylvanAPI() {
-    this.resources = new ResourceRegistry();
-    this.loader = new ResourceLoader(this.resources);
+    this.assets = new ResourceRegistry();
+    this.loader = new ResourceLoader(this.assets);
 
     this.Game = Game;
     this.Scene = Scene;

@@ -1,6 +1,8 @@
 "use strict";
 
-class ResourceLoader extends PIXI.loaders.Loader {
+import { Loader } from 'pixi.js';
+
+class ResourceLoader extends Loader {
     constructor(resourceRegistry) {
         super();
         this._resourceRegistry = resourceRegistry;
@@ -16,7 +18,7 @@ class ResourceLoader extends PIXI.loaders.Loader {
 
             this.onError.add(reject);
             
-            PIXI.loaders.Loader.prototype.load.call(this, (loader, resources) => {
+            Loader.prototype.load.call(this, (loader, resources) => {
                 for (const alias in resources) {
                     if (resources.hasOwnProperty(alias)) {
                         this._resourceRegistry.store(alias, resources[alias]);

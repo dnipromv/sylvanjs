@@ -1,6 +1,8 @@
 "use strict";
 
-class Scene extends PIXI.Container {
+import { Container } from 'pixi.js';
+
+class Scene extends Container {
     constructor() {
         super();
         

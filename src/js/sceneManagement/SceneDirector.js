@@ -1,5 +1,6 @@
 "use strict";
 
+import { Ticker } from 'pixi.js';
 import EventDispatcher from "../components/EventDispatcher";
 
 class SceneDirector {
@@ -36,7 +37,7 @@ class SceneDirector {
                 
                 if (scene.update) {
                     let elapsedTime = 0;
-                    scene.ticker = new PIXI.ticker.Ticker();
+                    scene.ticker = new Ticker();
                     scene.ticker.add((dt) => {
                         const dtN = dt * 0.01;
                         elapsedTime += dtN;

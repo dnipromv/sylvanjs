@@ -1,11 +1,13 @@
 "use strict";
 
+import { Application } from 'pixi.js';
+
 import TimerSystem from "./timer/TimerSystem";
 import TweenSystem from "./animation/TweenSystem";
 import SceneDirector from "./sceneManagement/SceneDirector";
 import InputHandler from "./components/InputHandler";
 
-class Game extends PIXI.Application {
+class Game extends Application {
     constructor(config) {
         super({view: config.canvas, width: config.canvas.width, height: config.canvas.height});
         
