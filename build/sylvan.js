@@ -48293,7 +48293,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_HttpService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/HttpService */ "./src/js/components/HttpService.js");
 /* harmony import */ var _resourceManagement_ResourceRegistry__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./resourceManagement/ResourceRegistry */ "./src/js/resourceManagement/ResourceRegistry.js");
 /* harmony import */ var _resourceManagement_ResourceLoader__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./resourceManagement/ResourceLoader */ "./src/js/resourceManagement/ResourceLoader.js");
-/* harmony import */ var _animation_EASING__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./animation/EASING */ "./src/js/animation/EASING.js");
+/* harmony import */ var _inputManagement_InputSystem__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./inputManagement/InputSystem */ "./src/js/inputManagement/InputSystem.js");
+/* harmony import */ var _animation_EASING__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./animation/EASING */ "./src/js/animation/EASING.js");
+/* harmony import */ var _inputManagement_KEYBOARD_KEY__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./inputManagement/KEYBOARD_KEY */ "./src/js/inputManagement/KEYBOARD_KEY.js");
+
+
 
 
 
@@ -48309,15 +48313,18 @@ __webpack_require__.r(__webpack_exports__);
 function SylvanAPI() {
   this.assets = new _resourceManagement_ResourceRegistry__WEBPACK_IMPORTED_MODULE_6__["default"]();
   this.loader = new _resourceManagement_ResourceLoader__WEBPACK_IMPORTED_MODULE_7__["default"](this.assets);
+  this.input = SylvanAPI.input;
   this.Game = _Game__WEBPACK_IMPORTED_MODULE_1__["default"];
   this.Scene = _sceneManagement_Scene__WEBPACK_IMPORTED_MODULE_2__["default"];
   this.Vector = _components_Vector__WEBPACK_IMPORTED_MODULE_3__["default"];
   this.Camera = _components_Camera__WEBPACK_IMPORTED_MODULE_4__["default"];
   this.HttpService = _components_HttpService__WEBPACK_IMPORTED_MODULE_5__["default"];
-  this.EASING = _animation_EASING__WEBPACK_IMPORTED_MODULE_8__["default"];
+  this.EASING = _animation_EASING__WEBPACK_IMPORTED_MODULE_9__["default"];
+  this.KEYBOARD_KEY = _inputManagement_KEYBOARD_KEY__WEBPACK_IMPORTED_MODULE_10__["default"];
 }
 
 SylvanAPI.prototype = Object.create(pixi_js__WEBPACK_IMPORTED_MODULE_0__);
+SylvanAPI.input = new _inputManagement_InputSystem__WEBPACK_IMPORTED_MODULE_8__["default"]();
 /* harmony default export */ __webpack_exports__["default"] = (SylvanAPI);
 
 /***/ }),
@@ -48816,6 +48823,105 @@ class Interface {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (Interface);
+
+/***/ }),
+
+/***/ "./src/js/inputManagement/InputSystem.js":
+/*!***********************************************!*\
+  !*** ./src/js/inputManagement/InputSystem.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+class InputSystem {
+  constructor() {
+    this._handlers = [];
+    window.addEventListener("keydown", event => {
+      if (event.repeat) {
+        console.log(event.key);
+      } else {
+        this._emit(event.key.toLowerCase() + "/down");
+      }
+    });
+  }
+
+  keyDown(key, callback, params, scope) {
+    if (Array.isArray(key)) {
+      key.forEach(key => {
+        this._registerEvent(key.toLowerCase() + "/down", callback, params, scope);
+      }, this);
+    } else {
+      this._registerEvent(key.toLowerCase() + "/down", callback, params, scope);
+    }
+  }
+
+  keyPress(key, callback, frequency, params, scope) {
+    if (Array.isArray(key)) {
+      key.forEach(key => {
+        this._registerEvent(key.toLowerCase() + "/press", callback, params, scope);
+      }, this);
+    } else {
+      this._registerEvent(key.toLowerCase() + "/press", callback, params, scope);
+    }
+  }
+
+  _emit(eventKey) {
+    const eventHandlers = this._handlers[eventKey];
+
+    if (eventHandlers) {
+      for (let i = eventHandlers.length - 1; i >= 0; i--) {
+        const handler = eventHandlers[i];
+
+        if (handler.scope) {
+          handler.callback.apply(handler.scope, handler.params);
+        } else {
+          handler.callback(...handler.params);
+        }
+      }
+    }
+  }
+
+  _registerEvent(eventKey, callback, params = [], scope) {
+    this._handlers[eventKey] = this._handlers[eventKey] || [];
+
+    this._handlers[eventKey].push({
+      callback,
+      params,
+      scope
+    });
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (InputSystem);
+
+/***/ }),
+
+/***/ "./src/js/inputManagement/KEYBOARD_KEY.js":
+/*!************************************************!*\
+  !*** ./src/js/inputManagement/KEYBOARD_KEY.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  W: "W",
+  A: "A",
+  S: "S",
+  D: "D",
+  UP: "ArrowUp",
+  DOWN: "ArrowDown",
+  LEFT: "ArrowLeft",
+  RIGHT: "ArrowRight"
+});
 
 /***/ }),
 
