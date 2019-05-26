@@ -110,8 +110,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/utils */ "./node_modules/@pixi/utils/lib/utils.es.js");
 /* harmony import */ var _pixi_display__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixi/display */ "./node_modules/@pixi/display/lib/display.es.js");
 /*!
- * @pixi/accessibility - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/accessibility - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/accessibility is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -536,7 +536,7 @@ AccessibilityManager.prototype.update = function update ()
 /**
  * Adjust the hit area based on the bounds of a display object
  *
- * @param {Rectangle} hitArea - Bounds of the child
+ * @param {PIXI.Rectangle} hitArea - Bounds of the child
  */
 AccessibilityManager.prototype.capHitArea = function capHitArea (hitArea)
 {
@@ -567,7 +567,7 @@ AccessibilityManager.prototype.capHitArea = function capHitArea (hitArea)
  * Adds a DisplayObject to the accessibility manager
  *
  * @private
- * @param {DisplayObject} displayObject - The child to make accessible.
+ * @param {PIXI.DisplayObject} displayObject - The child to make accessible.
  */
 AccessibilityManager.prototype.addChild = function addChild (displayObject)
 {
@@ -768,8 +768,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_display__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/display */ "./node_modules/@pixi/display/lib/display.es.js");
 /* harmony import */ var _pixi_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixi/core */ "./node_modules/@pixi/core/lib/core.es.js");
 /*!
- * @pixi/app - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/app - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/app is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -1022,8 +1022,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TYPES", function() { return TYPES; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WRAP_MODES", function() { return WRAP_MODES; });
 /*!
- * @pixi/constants - v5.0.0-rc.3
- * Compiled Fri, 22 Mar 2019 16:33:44 UTC
+ * @pixi/constants - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/constants is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -1410,8 +1410,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_math__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @pixi/math */ "./node_modules/@pixi/math/lib/math.es.js");
 /* harmony import */ var _pixi_display__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @pixi/display */ "./node_modules/@pixi/display/lib/display.es.js");
 /*!
- * @pixi/core - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/core - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/core is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -1649,7 +1649,10 @@ Object.defineProperties( Resource.prototype, prototypeAccessors );
 var BaseImageResource = /*@__PURE__*/(function (Resource) {
     function BaseImageResource(source)
     {
-        Resource.call(this, source.width, source.height);
+        var width = source.naturalWidth || source.videoWidth || source.width;
+        var height = source.naturalHeight || source.videoHeight || source.height;
+
+        Resource.call(this, width, height);
 
         /**
          * The source element
@@ -1716,6 +1719,25 @@ var BaseImageResource = /*@__PURE__*/(function (Resource) {
     };
 
     /**
+     * Checks if source width/height was changed, resize can cause extra baseTexture update.
+     * Triggers one update in any case.
+     */
+    BaseImageResource.prototype.update = function update ()
+    {
+        if (this.destroyed)
+        {
+            return;
+        }
+
+        var width = this.source.naturalWidth || this.source.videoWidth || this.source.width;
+        var height = this.source.naturalHeight || this.source.videoHeight || this.source.height;
+
+        this.resize(width, height);
+
+        Resource.prototype.update.call(this);
+    };
+
+    /**
      * Destroy this BaseImageResource
      * @override
      * @param {PIXI.BaseTexture} [fromTexture] Optional base texture
@@ -1777,7 +1799,8 @@ var ImageResource = /*@__PURE__*/(function (BaseImageResource) {
          * @member {boolean}
          * @default PIXI.settings.CREATE_IMAGE_BITMAP
          */
-        this.createBitmap = options.createBitmap !== false && _pixi_settings__WEBPACK_IMPORTED_MODULE_2__["settings"].CREATE_IMAGE_BITMAP && !!window.createImageBitmap;
+        this.createBitmap = (options.createBitmap !== undefined
+            ? options.createBitmap : _pixi_settings__WEBPACK_IMPORTED_MODULE_2__["settings"].CREATE_IMAGE_BITMAP) && !!window.createImageBitmap;
 
         /**
          * Controls texture premultiplyAlpha field
@@ -2039,7 +2062,7 @@ var INSTALLED = [];
  * @param {number} [options.height] - BufferResource's height
  * @param {boolean} [options.autoLoad=true] - Image, SVG and Video flag to start loading
  * @param {number} [options.scale=1] - SVG source scale
- * @param {boolean} [options.createBitmap=true] - Image option to create Bitmap object
+ * @param {boolean} [options.createBitmap=PIXI.settings.CREATE_IMAGE_BITMAP] - Image option to create Bitmap object
  * @param {boolean} [options.crossorigin=true] - Image and Video option to set crossOrigin
  * @param {boolean} [options.autoPlay=true] - Video option to start playing video immediately
  * @param {number} [options.updateFPS=0] - Video option to update how many times a second the
@@ -2524,7 +2547,7 @@ var BaseTexture = /*@__PURE__*/(function (EventEmitter) {
      *
      * @param {PIXI.SCALE_MODES} [scaleMode] - Pixi scalemode
      * @param {PIXI.MIPMAP_MODES} [mipmap] - enable mipmaps
-     * @returns {BaseTexture} this
+     * @returns {PIXI.BaseTexture} this
      */
     BaseTexture.prototype.setStyle = function setStyle (scaleMode, mipmap)
     {
@@ -2556,7 +2579,7 @@ var BaseTexture = /*@__PURE__*/(function (EventEmitter) {
      * @param {number} width Visual width
      * @param {number} height Visual height
      * @param {number} [resolution] Optionally set resolution
-     * @returns {BaseTexture} this
+     * @returns {PIXI.BaseTexture} this
      */
     BaseTexture.prototype.setSize = function setSize (width, height, resolution)
     {
@@ -2575,7 +2598,7 @@ var BaseTexture = /*@__PURE__*/(function (EventEmitter) {
      * @param {number} realWidth Full rendered width
      * @param {number} realHeight Full rendered height
      * @param {number} [resolution] Optionally set resolution
-     * @returns {BaseTexture} this
+     * @returns {PIXI.BaseTexture} this
      */
     BaseTexture.prototype.setRealSize = function setRealSize (realWidth, realHeight, resolution)
     {
@@ -2602,7 +2625,7 @@ var BaseTexture = /*@__PURE__*/(function (EventEmitter) {
      * Changes resolution
      *
      * @param {number} [resolution] res
-     * @returns {BaseTexture} this
+     * @returns {PIXI.BaseTexture} this
      */
     BaseTexture.prototype.setResolution = function setResolution (resolution)
     {
@@ -2619,7 +2642,7 @@ var BaseTexture = /*@__PURE__*/(function (EventEmitter) {
         {
             this.width = this.width * oldResolution / resolution;
             this.height = this.height * oldResolution / resolution;
-            this.emit('update');
+            this.emit('update', this);
         }
 
         this._refreshPOT();
@@ -2631,7 +2654,7 @@ var BaseTexture = /*@__PURE__*/(function (EventEmitter) {
      * Sets the resource if it wasn't set. Throws error if resource already present
      *
      * @param {PIXI.resources.Resource} resource - that is managing this BaseTexture
-     * @returns {BaseTexture} this
+     * @returns {PIXI.BaseTexture} this
      */
     BaseTexture.prototype.setResource = function setResource (resource)
     {
@@ -3398,41 +3421,46 @@ var SVGResource = /*@__PURE__*/(function (BaseImageResource) {
      */
     SVGResource.prototype._loadString = function _loadString (svgString)
     {
+        var this$1 = this;
+
         var svgSize = SVGResource.getSize(svgString);
 
-        // TODO do we need to wait for this to load?
-        // seems instant!
-        //
         var tempImage = new Image();
 
         tempImage.src = "data:image/svg+xml," + svgString;
 
-        var svgWidth = svgSize.width;
-        var svgHeight = svgSize.height;
+        tempImage.onerror = function () {
+            throw new Error(("Unable to load image from: " + (tempImage.src)));
+        };
 
-        if (!svgWidth || !svgHeight)
-        {
-            throw new Error('The SVG image must have width and height defined (in pixels), canvas API needs them.');
-        }
+        tempImage.onload = function () {
+            var svgWidth = svgSize.width;
+            var svgHeight = svgSize.height;
 
-        // Scale realWidth and realHeight
-        this._width = Math.round(svgWidth * this.scale);
-        this._height = Math.round(svgHeight * this.scale);
+            if (!svgWidth || !svgHeight)
+            {
+                throw new Error('The SVG image must have width and height defined (in pixels), canvas API needs them.');
+            }
 
-        // Create a canvas element
-        var canvas = this.source;
+            // Scale realWidth and realHeight
+            var width = Math.round(svgWidth * this$1.scale);
+            var height = Math.round(svgHeight * this$1.scale);
 
-        canvas.width = this._width;
-        canvas.height = this._height;
-        canvas._pixiId = "canvas_" + (Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_1__["uid"])());
+            // Create a canvas element
+            var canvas = this$1.source;
 
-        // Draw the Svg to the canvas
-        canvas
-            .getContext('2d')
-            .drawImage(tempImage, 0, 0, svgWidth, svgHeight, 0, 0, this.width, this.height);
+            canvas.width = width;
+            canvas.height = height;
+            canvas._pixiId = "canvas_" + (Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_1__["uid"])());
 
-        this._resolve();
-        this._resolve = null;
+            // Draw the Svg to the canvas
+            canvas
+                .getContext('2d')
+                .drawImage(tempImage, 0, 0, svgWidth, svgHeight, 0, 0, width, height);
+
+            this$1._resolve();
+            this$1._resolve = null;
+        };
     };
 
     /**
@@ -4158,7 +4186,7 @@ Object.defineProperties( Framebuffer.prototype, prototypeAccessors$1 );
  *
  * ```js
  * let renderer = PIXI.autoDetectRenderer();
- * let baseRenderTexture = new PIXI.BaseRenderTexture(800, 600);
+ * let baseRenderTexture = new PIXI.BaseRenderTexture({ width: 800, height: 600 });
  * let renderTexture = new PIXI.RenderTexture(baseRenderTexture);
  * let sprite = PIXI.Sprite.from("spinObj_01.png");
  *
@@ -4177,7 +4205,7 @@ Object.defineProperties( Framebuffer.prototype, prototypeAccessors$1 );
  *
  * sprite.setTransform()
  *
- * let baseRenderTexture = new PIXI.BaseRenderTexture(100, 100);
+ * let baseRenderTexture = new PIXI.BaseRenderTexture({ width: 100, height: 100 });
  * let renderTexture = new PIXI.RenderTexture(baseRenderTexture);
  *
  * renderer.render(sprite, renderTexture);  // Renders to center of RenderTexture
@@ -4397,6 +4425,9 @@ var DEFAULT_UVS = new TextureUvs();
  * let sprite2 = new PIXI.Sprite(texture);
  * ```
  *
+ * If you didnt pass the texture frame to constructor, it enables `noFrame` mode:
+ * it subscribes on baseTexture events, it automatically resizes at the same time as baseTexture.
+ *
  * Textures made from SVGs, loaded or not, cannot be used before the file finishes processing.
  * You can check for this by checking the sprite's _textureID property.
  * ```js
@@ -4417,6 +4448,19 @@ var Texture = /*@__PURE__*/(function (EventEmitter) {
 
         /**
          * Does this Texture have any frame data assigned to it?
+         *
+         * This mode is enabled automatically if no frame was passed inside constructor.
+         *
+         * In this mode texture is subscribed to baseTexture events, and fires `update` on any change.
+         *
+         * Beware, after loading or resize of baseTexture event can fired two times!
+         * If you want more control, subscribe on baseTexture itself.
+         *
+         * ```js
+         * texture.on('update', () => {});
+         * ```
+         *
+         * Any assignment of `frame` switches off `noFrame` mode.
          *
          * @member {boolean}
          */
@@ -4505,23 +4549,6 @@ var Texture = /*@__PURE__*/(function (EventEmitter) {
             throw new Error('attempt to use diamond-shaped UVs. If you are sure, set rotation manually');
         }
 
-        if (baseTexture.valid)
-        {
-            if (this.noFrame)
-            {
-                frame = new _pixi_math__WEBPACK_IMPORTED_MODULE_5__["Rectangle"](0, 0, baseTexture.width, baseTexture.height);
-
-                // if there is no frame we should monitor for any base texture changes..
-                baseTexture.on('update', this.onBaseTextureUpdated, this);
-            }
-
-            this.frame = frame;
-        }
-        else
-        {
-            baseTexture.once('loaded', this.onBaseTextureUpdated, this);
-        }
-
         /**
          * Anchor point that is used as default if sprite is created with this texture.
          * Changing the `defaultAnchor` at a later point of time will not update Sprite's anchor point.
@@ -4548,6 +4575,28 @@ var Texture = /*@__PURE__*/(function (EventEmitter) {
          * @member {string[]}
          */
         this.textureCacheIds = [];
+
+        if (!baseTexture.valid)
+        {
+            baseTexture.once('loaded', this.onBaseTextureUpdated, this);
+        }
+        else if (this.noFrame)
+        {
+            // if there is no frame we should monitor for any base texture changes..
+            if (baseTexture.valid)
+            {
+                this.onBaseTextureUpdated(baseTexture);
+            }
+        }
+        else
+        {
+            this.frame = frame;
+        }
+
+        if (this.noFrame)
+        {
+            baseTexture.on('update', this.onBaseTextureUpdated, this);
+        }
     }
 
     if ( EventEmitter ) Texture.__proto__ = EventEmitter;
@@ -4559,10 +4608,17 @@ var Texture = /*@__PURE__*/(function (EventEmitter) {
     /**
      * Updates this texture on the gpu.
      *
+     * Calls the TextureResource update.
+     *
+     * If you adjusted `frame` manually, please call `updateUvs()` instead.
+     *
      */
     Texture.prototype.update = function update ()
     {
-        this.baseTexture.update();
+        if (this.baseTexture.resource)
+        {
+            this.baseTexture.resource.update();
+        }
     };
 
     /**
@@ -4573,18 +4629,23 @@ var Texture = /*@__PURE__*/(function (EventEmitter) {
      */
     Texture.prototype.onBaseTextureUpdated = function onBaseTextureUpdated (baseTexture)
     {
-        this._updateID++;
-
-        // TODO this code looks confusing.. boo to abusing getters and setters!
         if (this.noFrame)
         {
-            this.frame = new _pixi_math__WEBPACK_IMPORTED_MODULE_5__["Rectangle"](0, 0, baseTexture.width, baseTexture.height);
+            if (!this.baseTexture.valid)
+            {
+                return;
+            }
+
+            this._frame.width = baseTexture.width;
+            this._frame.height = baseTexture.height;
+            this.valid = true;
+            this.updateUvs();
         }
         else
         {
+            // TODO this code looks confusing.. boo to abusing getters and setters!
+            // if user gave us frame that has bigger size than resized texture it can be a problem
             this.frame = this._frame;
-            // TODO maybe watch out for the no frame option
-            // updating the texture will should update the frame if it was set to no frame..
         }
 
         this.emit('update', this);
@@ -4601,11 +4662,14 @@ var Texture = /*@__PURE__*/(function (EventEmitter) {
         {
             if (destroyBase)
             {
+                var ref = this.baseTexture;
+                var resource = ref.resource;
+
                 // delete the texture if it exists in the texture cache..
                 // this only needs to be removed if the base texture is actually destroyed too..
-                if (_pixi_utils__WEBPACK_IMPORTED_MODULE_1__["TextureCache"][this.baseTexture.imageUrl])
+                if (resource && _pixi_utils__WEBPACK_IMPORTED_MODULE_1__["TextureCache"][resource.url])
                 {
-                    Texture.removeFromCache(this.baseTexture.imageUrl);
+                    Texture.removeFromCache(resource.url);
                 }
 
                 this.baseTexture.destroy();
@@ -5044,7 +5108,7 @@ var RenderTexture = /*@__PURE__*/(function (Texture) {
         /**
          * The base texture object that this texture uses
          *
-         * @member {BaseTexture}
+         * @member {PIXI.BaseTexture}
          */
         Texture.call(this, baseRenderTexture, frame);
 
@@ -5065,10 +5129,10 @@ var RenderTexture = /*@__PURE__*/(function (Texture) {
         this.filterFrame = null;
 
         /**
-        * The key for pooled texture of FilterSystem
-        * @protected
-        * @member {string}
-        */
+         * The key for pooled texture of FilterSystem
+         * @protected
+         * @member {string}
+         */
         this.filterPoolKey = null;
 
         this.updateUvs();
@@ -5104,6 +5168,25 @@ var RenderTexture = /*@__PURE__*/(function (Texture) {
         }
 
         this.updateUvs();
+    };
+
+    /**
+     * Changes the resolution of baseTexture, but does not change framebuffer size.
+     *
+     * @param {number} resolution - The new resolution to apply to RenderTexture
+     */
+    RenderTexture.prototype.setResolution = function setResolution (resolution)
+    {
+        var ref = this;
+        var baseTexture = ref.baseTexture;
+
+        if (baseTexture.resolution === resolution)
+        {
+            return;
+        }
+
+        baseTexture.setResolution(resolution);
+        this.resize(baseTexture.width, baseTexture.height, false);
     };
 
     /**
@@ -6434,6 +6517,7 @@ var FilterSystem = /*@__PURE__*/(function (System) {
         }
 
         renderTexture.filterPoolKey = key;
+        renderTexture.setResolution(resolution);
 
         return renderTexture;
     };
@@ -10219,6 +10303,11 @@ var RenderTextureSystem = /*@__PURE__*/(function (System) {
 
         this.destinationFrame.width = destinationFrame.width / resolution;
         this.destinationFrame.height = destinationFrame.height / resolution;
+
+        if (sourceFrame === destinationFrame)
+        {
+            this.sourceFrame.copyFrom(this.destinationFrame);
+        }
     };
 
     /**
@@ -11388,14 +11477,14 @@ var TextureSystem = /*@__PURE__*/(function (System) {
 
         texture = texture.baseTexture || texture;
 
-        if (texture._glTextures[this.renderer.CONTEXT_UID])
+        if (texture._glTextures[this.CONTEXT_UID])
         {
             this.unbind(texture);
 
-            gl.deleteTexture(texture._glTextures[this.renderer.CONTEXT_UID].texture);
+            gl.deleteTexture(texture._glTextures[this.CONTEXT_UID].texture);
             texture.off('dispose', this.destroyTexture, this);
 
-            delete texture._glTextures[this.renderer.CONTEXT_UID];
+            delete texture._glTextures[this.CONTEXT_UID];
 
             if (!skipRemove)
             {
@@ -11450,7 +11539,7 @@ var TextureSystem = /*@__PURE__*/(function (System) {
      *
      * @private
      * @param {PIXI.BaseTexture} texture - Texture to update
-     * @param {glTexture} glTexture
+     * @param {PIXI.GLTexture} glTexture
      */
     TextureSystem.prototype.setStyle = function setStyle (texture, glTexture)
     {
@@ -13010,8 +13099,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixi/math */ "./node_modules/@pixi/math/lib/math.es.js");
 /* harmony import */ var _pixi_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @pixi/utils */ "./node_modules/@pixi/utils/lib/utils.es.js");
 /*!
- * @pixi/display - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/display - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/display is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -14453,7 +14542,7 @@ var Container = /*@__PURE__*/(function (DisplayObject) {
      *
      * @param {number} [beginIndex=0] - The beginning position.
      * @param {number} [endIndex=this.children.length] - The ending position. Default value is size of the container.
-     * @returns {DisplayObject[]} List of removed children
+     * @returns {PIXI.DisplayObject[]} List of removed children
      */
     Container.prototype.removeChildren = function removeChildren (beginIndex, endIndex)
     {
@@ -14820,8 +14909,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixi/utils */ "./node_modules/@pixi/utils/lib/utils.es.js");
 /* harmony import */ var _pixi_math__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @pixi/math */ "./node_modules/@pixi/math/lib/math.es.js");
 /*!
- * @pixi/extract - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/extract - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/extract is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -15102,8 +15191,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AlphaFilter", function() { return AlphaFilter; });
 /* harmony import */ var _pixi_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/core */ "./node_modules/@pixi/core/lib/core.es.js");
 /*!
- * @pixi/filter-alpha - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/filter-alpha - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/filter-alpha is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -15186,8 +15275,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/core */ "./node_modules/@pixi/core/lib/core.es.js");
 /* harmony import */ var _pixi_settings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixi/settings */ "./node_modules/@pixi/settings/lib/settings.es.js");
 /*!
- * @pixi/filter-blur - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/filter-blur - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/filter-blur is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -15630,8 +15719,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ColorMatrixFilter", function() { return ColorMatrixFilter; });
 /* harmony import */ var _pixi_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/core */ "./node_modules/@pixi/core/lib/core.es.js");
 /*!
- * @pixi/filter-color-matrix - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/filter-color-matrix - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/filter-color-matrix is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -16247,8 +16336,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/core */ "./node_modules/@pixi/core/lib/core.es.js");
 /* harmony import */ var _pixi_math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixi/math */ "./node_modules/@pixi/math/lib/math.es.js");
 /*!
- * @pixi/filter-displacement - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/filter-displacement - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/filter-displacement is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -16383,8 +16472,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FXAAFilter", function() { return FXAAFilter; });
 /* harmony import */ var _pixi_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/core */ "./node_modules/@pixi/core/lib/core.es.js");
 /*!
- * @pixi/filter-fxaa - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/filter-fxaa - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/filter-fxaa is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -16438,8 +16527,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NoiseFilter", function() { return NoiseFilter; });
 /* harmony import */ var _pixi_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/core */ "./node_modules/@pixi/core/lib/core.es.js");
 /*!
- * @pixi/filter-noise - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/filter-noise - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/filter-noise is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -16544,8 +16633,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_display__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @pixi/display */ "./node_modules/@pixi/display/lib/display.es.js");
 /* harmony import */ var _pixi_constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pixi/constants */ "./node_modules/@pixi/constants/lib/constants.es.js");
 /*!
- * @pixi/graphics - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/graphics - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/graphics is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -18355,7 +18444,7 @@ var GraphicsGeometry = /*@__PURE__*/(function (BatchGeometry) {
         var scaleX = frame.width / baseTexture.width;
         var scaleY = frame.height / baseTexture.height;
         var offsetX = frame.x / frame.width;
-        var offsetY = frame.y / frame.width;
+        var offsetY = frame.y / frame.height;
         var minX = Math.floor(uvs[start] + eps);
         var minY = Math.floor(uvs[start + 1] + eps);
 
@@ -19968,8 +20057,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_display__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @pixi/display */ "./node_modules/@pixi/display/lib/display.es.js");
 /* harmony import */ var _pixi_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @pixi/utils */ "./node_modules/@pixi/utils/lib/utils.es.js");
 /*!
- * @pixi/interaction - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/interaction - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/interaction is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -22361,8 +22450,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixi/utils */ "./node_modules/@pixi/utils/lib/utils.es.js");
 /* harmony import */ var _pixi_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @pixi/core */ "./node_modules/@pixi/core/lib/core.es.js");
 /*!
- * @pixi/loaders - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/loaders - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/loaders is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -24212,6 +24301,31 @@ Loader.registerPlugin(TextureLoader);
  */
 
 /**
+ * @memberof PIXI.Loader#
+ * @member {object} onStart
+ */
+
+/**
+ * @memberof PIXI.Loader#
+ * @member {object} onProgress
+ */
+
+/**
+ * @memberof PIXI.Loader#
+ * @member {object} onError
+ */
+
+/**
+ * @memberof PIXI.Loader#
+ * @member {object} onLoad
+ */
+
+/**
+ * @memberof PIXI.Loader#
+ * @member {object} onComplete
+ */
+
+/**
  * Application plugin for supporting loader option. Installing the LoaderPlugin
  * is not necessary if using **pixi.js** or **pixi.js-legacy**.
  * @example
@@ -24290,8 +24404,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SHAPES", function() { return SHAPES; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Transform", function() { return Transform; });
 /*!
- * @pixi/math - v5.0.0-rc.3
- * Compiled Fri, 22 Mar 2019 16:33:44 UTC
+ * @pixi/math - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/math is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -26131,8 +26245,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_mesh__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/mesh */ "./node_modules/@pixi/mesh/lib/mesh.es.js");
 /* harmony import */ var _pixi_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixi/core */ "./node_modules/@pixi/core/lib/core.es.js");
 /*!
- * @pixi/mesh-extras - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/mesh-extras - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/mesh-extras is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -26913,8 +27027,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_settings__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pixi/settings */ "./node_modules/@pixi/settings/lib/settings.es.js");
 /* harmony import */ var _pixi_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @pixi/utils */ "./node_modules/@pixi/utils/lib/utils.es.js");
 /*!
- * @pixi/mesh - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/mesh - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/mesh is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -27717,8 +27831,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pixi/utils */ "./node_modules/@pixi/utils/lib/utils.es.js");
 /* harmony import */ var _pixi_settings__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @pixi/settings */ "./node_modules/@pixi/settings/lib/settings.es.js");
 /*!
- * @pixi/mixin-cache-as-bitmap - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/mixin-cache-as-bitmap - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/mixin-cache-as-bitmap is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -28158,8 +28272,8 @@ _pixi_display__WEBPACK_IMPORTED_MODULE_2__["DisplayObject"].prototype._cacheAsBi
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_display__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/display */ "./node_modules/@pixi/display/lib/display.es.js");
 /*!
- * @pixi/mixin-get-child-by-name - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/mixin-get-child-by-name - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/mixin-get-child-by-name is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -28211,8 +28325,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_display__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/display */ "./node_modules/@pixi/display/lib/display.es.js");
 /* harmony import */ var _pixi_math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixi/math */ "./node_modules/@pixi/math/lib/math.es.js");
 /*!
- * @pixi/mixin-get-global-position - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/mixin-get-global-position - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/mixin-get-global-position is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -28225,11 +28339,11 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @method getGlobalPosition
  * @memberof PIXI.DisplayObject#
- * @param {Point} point - The point to write the global value to. If null a new point will be returned
- * @param {boolean} skipUpdate - Setting to true will stop the transforms of the scene graph from
+ * @param {PIXI.Point} [point=new PIXI.Point()] - The point to write the global value to.
+ * @param {boolean} [skipUpdate=false] - Setting to true will stop the transforms of the scene graph from
  *  being updated. This means the calculation returned MAY be out of date BUT will give you a
  *  nice performance boost.
- * @return {Point} The updated point.
+ * @return {PIXI.Point} The updated point.
  */
 _pixi_display__WEBPACK_IMPORTED_MODULE_0__["DisplayObject"].prototype.getGlobalPosition = function getGlobalPosition(point, skipUpdate)
 {
@@ -28270,8 +28384,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @pixi/core */ "./node_modules/@pixi/core/lib/core.es.js");
 /* harmony import */ var _pixi_math__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pixi/math */ "./node_modules/@pixi/math/lib/math.es.js");
 /*!
- * @pixi/particles - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/particles - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/particles is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -28411,7 +28525,7 @@ var ParticleContainer = /*@__PURE__*/(function (Container) {
          * The texture used to render the children.
          *
          * @readonly
-         * @member {BaseTexture}
+         * @member {PIXI.BaseTexture}
          */
         this.baseTexture = null;
 
@@ -29271,8 +29385,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
 /* harmony import */ var object_assign__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(object_assign__WEBPACK_IMPORTED_MODULE_1__);
 /*!
- * @pixi/polyfill - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/polyfill - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/polyfill is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -29456,8 +29570,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_display__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pixi/display */ "./node_modules/@pixi/display/lib/display.es.js");
 /* harmony import */ var _pixi_text__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @pixi/text */ "./node_modules/@pixi/text/lib/text.es.js");
 /*!
- * @pixi/prepare - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/prepare - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/prepare is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -30191,8 +30305,8 @@ TimeLimiter.prototype.allowedToUpload = function allowedToUpload ()
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Runner", function() { return Runner; });
 /*!
- * @pixi/runner - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/runner - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/runner is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -30402,8 +30516,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ismobilejs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(ismobilejs__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony reexport (default from non-harmony) */ __webpack_require__.d(__webpack_exports__, "isMobile", function() { return ismobilejs__WEBPACK_IMPORTED_MODULE_0___default.a; });
 /*!
- * @pixi/settings - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/settings - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/settings is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -30679,15 +30793,15 @@ var settings = {
     CAN_UPLOAD_SAME_BUFFER: canUploadSameBuffer(),
 
     /**
-     * Enables bitmap creation before image load
+     * Enables bitmap creation before image load. This feature is experimental.
      *
      * @static
      * @name CREATE_IMAGE_BITMAP
      * @memberof PIXI.settings
      * @type {boolean}
-     * @default true
+     * @default false
      */
-    CREATE_IMAGE_BITMAP: true,
+    CREATE_IMAGE_BITMAP: false,
 
     /**
      * If true PixiJS will Math.floor() x/y values when rendering, stopping pixel interpolation.
@@ -30723,8 +30837,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_sprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @pixi/sprite */ "./node_modules/@pixi/sprite/lib/sprite.es.js");
 /* harmony import */ var _pixi_ticker__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @pixi/ticker */ "./node_modules/@pixi/ticker/lib/ticker.es.js");
 /*!
- * @pixi/sprite-animated - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/sprite-animated - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/sprite-animated is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -31198,8 +31312,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_sprite__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @pixi/sprite */ "./node_modules/@pixi/sprite/lib/sprite.es.js");
 /* harmony import */ var _pixi_constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pixi/constants */ "./node_modules/@pixi/constants/lib/constants.es.js");
 /*!
- * @pixi/sprite-tiling - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/sprite-tiling - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/sprite-tiling is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -31721,8 +31835,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_display__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pixi/display */ "./node_modules/@pixi/display/lib/display.es.js");
 /* harmony import */ var _pixi_settings__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @pixi/settings */ "./node_modules/@pixi/settings/lib/settings.es.js");
 /*!
- * @pixi/sprite - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/sprite - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/sprite is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -32122,7 +32236,7 @@ var Sprite = /*@__PURE__*/(function (Container) {
     /**
      * Gets the local bounds of the sprite object.
      *
-     * @param {PIXI.Rectangle} rect - The output rectangle.
+     * @param {PIXI.Rectangle} [rect] - The output rectangle.
      * @return {PIXI.Rectangle} The bounds.
      */
     Sprite.prototype.getLocalBounds = function getLocalBounds (rect)
@@ -32399,8 +32513,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @pixi/utils */ "./node_modules/@pixi/utils/lib/utils.es.js");
 /* harmony import */ var _pixi_loaders__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @pixi/loaders */ "./node_modules/@pixi/loaders/lib/loaders.es.js");
 /*!
- * @pixi/spritesheet - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/spritesheet - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/spritesheet is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -32835,8 +32949,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @pixi/utils */ "./node_modules/@pixi/utils/lib/utils.es.js");
 /* harmony import */ var _pixi_loaders__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @pixi/loaders */ "./node_modules/@pixi/loaders/lib/loaders.es.js");
 /*!
- * @pixi/text-bitmap - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/text-bitmap - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/text-bitmap is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -33691,8 +33805,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pixi_math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @pixi/math */ "./node_modules/@pixi/math/lib/math.es.js");
 /* harmony import */ var _pixi_utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pixi/utils */ "./node_modules/@pixi/utils/lib/utils.es.js");
 /*!
- * @pixi/text - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/text - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/text is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -34495,14 +34609,67 @@ function deepCopyProperties(target, source, propertyObj) {
  */
 var TextMetrics = function TextMetrics(text, style, width, height, lines, lineWidths, lineHeight, maxLineWidth, fontProperties)
 {
+    /**
+     * The text that was measured
+     *
+     * @member {string}
+     */
     this.text = text;
+
+    /**
+     * The style that was measured
+     *
+     * @member {PIXI.TextStyle}
+     */
     this.style = style;
+
+    /**
+     * The measured width of the text
+     *
+     * @member {number}
+     */
     this.width = width;
+
+    /**
+     * The measured height of the text
+     *
+     * @member {number}
+     */
     this.height = height;
+
+    /**
+     * An array of lines of the text broken by new lines and wrapping is specified in style
+     *
+     * @member {string[]}
+     */
     this.lines = lines;
+
+    /**
+     * An array of the line widths for each line matched to `lines`
+     *
+     * @member {number[]}
+     */
     this.lineWidths = lineWidths;
+
+    /**
+     * The measured line height for this style
+     *
+     * @member {number}
+     */
     this.lineHeight = lineHeight;
+
+    /**
+     * The maximum line width for all measured lines
+     *
+     * @member {number}
+     */
     this.maxLineWidth = maxLineWidth;
+
+    /**
+     * The font properties object from TextMetrics.measureFont
+     *
+     * @member {PIXI.IFontMetrics}
+     */
     this.fontProperties = fontProperties;
 };
 
@@ -35597,8 +35764,8 @@ var Text = /*@__PURE__*/(function (Sprite) {
     /**
      * Gets the local bounds of the text object.
      *
-     * @param {Rectangle} rect - The output rectangle.
-     * @return {Rectangle} The bounds.
+     * @param {PIXI.Rectangle} rect - The output rectangle.
+     * @return {PIXI.Rectangle} The bounds.
      */
     Text.prototype.getLocalBounds = function getLocalBounds (rect)
     {
@@ -35904,8 +36071,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UPDATE_PRIORITY", function() { return UPDATE_PRIORITY; });
 /* harmony import */ var _pixi_settings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @pixi/settings */ "./node_modules/@pixi/settings/lib/settings.es.js");
 /*!
- * @pixi/ticker - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/ticker - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/ticker is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -36903,8 +37070,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (default from non-harmony) */ __webpack_require__.d(__webpack_exports__, "url", function() { return url__WEBPACK_IMPORTED_MODULE_3___default.a; });
 /* harmony import */ var _pixi_constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @pixi/constants */ "./node_modules/@pixi/constants/lib/constants.es.js");
 /*!
- * @pixi/utils - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * @pixi/utils - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * @pixi/utils is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -36930,7 +37097,7 @@ __webpack_require__.r(__webpack_exports__);
 _pixi_settings__WEBPACK_IMPORTED_MODULE_0__["settings"].RETINA_PREFIX = /@([0-9\.]+)x/;
 
 var saidHello = false;
-var VERSION = '5.0.0-rc.3';
+var VERSION = '5.0.3';
 
 /**
  * Skips the hello message of renderers that are created after this is run.
@@ -40547,7 +40714,7 @@ if (true) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!function(e){var n=/iPhone/i,t=/iPod/i,r=/iPad/i,a=/\bAndroid(?:.+)Mobile\b/i,p=/Android/i,l=/\bAndroid(?:.+)SD4930UR\b/i,b=/\bAndroid(?:.+)(?:KF[A-Z]{2,4})\b/i,f=/Windows Phone/i,u=/\bWindows(?:.+)ARM\b/i,c=/BlackBerry/i,s=/BB10/i,v=/Opera Mini/i,h=/\b(CriOS|Chrome)(?:.+)Mobile/i,w=/\Mobile(?:.+)Firefox\b/i;function m(e,i){return e.test(i)}function i(e){var i=e||("undefined"!=typeof navigator?navigator.userAgent:""),o=i.split("[FBAN");void 0!==o[1]&&(i=o[0]),void 0!==(o=i.split("Twitter"))[1]&&(i=o[0]);var d={apple:{phone:m(n,i)&&!m(f,i),ipod:m(t,i),tablet:!m(n,i)&&m(r,i)&&!m(f,i),device:(m(n,i)||m(t,i)||m(r,i))&&!m(f,i)},amazon:{phone:m(l,i),tablet:!m(l,i)&&m(b,i),device:m(l,i)||m(b,i)},android:{phone:!m(f,i)&&m(l,i)||!m(f,i)&&m(a,i),tablet:!m(f,i)&&!m(l,i)&&!m(a,i)&&(m(b,i)||m(p,i)),device:!m(f,i)&&(m(l,i)||m(b,i)||m(a,i)||m(p,i))},windows:{phone:m(f,i),tablet:m(u,i),device:m(f,i)||m(u,i)},other:{blackberry:m(c,i),blackberry10:m(s,i),opera:m(v,i),firefox:m(w,i),chrome:m(h,i),device:m(c,i)||m(s,i)||m(v,i)||m(w,i)||m(h,i)}};return d.any=d.apple.device||d.android.device||d.windows.device||d.other.device,d.phone=d.apple.phone||d.android.phone||d.windows.phone,d.tablet=d.apple.tablet||d.android.tablet||d.windows.tablet,d} true&&module.exports&&"undefined"==typeof window?module.exports=i: true&&module.exports&&"undefined"!=typeof window?module.exports=i(): true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (e.isMobile=i()),
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!function(e){var n=/iPhone/i,t=/iPod/i,r=/iPad/i,a=/\bAndroid(?:.+)Mobile\b/i,p=/Android/i,b=/\bAndroid(?:.+)SD4930UR\b/i,l=/\bAndroid(?:.+)(?:KF[A-Z]{2,4})\b/i,f=/Windows Phone/i,s=/\bWindows(?:.+)ARM\b/i,u=/BlackBerry/i,c=/BB10/i,h=/Opera Mini/i,v=/\b(CriOS|Chrome)(?:.+)Mobile/i,w=/Mobile(?:.+)Firefox\b/i;function m(e,i){return e.test(i)}function i(e){var i=e||("undefined"!=typeof navigator?navigator.userAgent:""),o=i.split("[FBAN");void 0!==o[1]&&(i=o[0]),void 0!==(o=i.split("Twitter"))[1]&&(i=o[0]);var d={apple:{phone:m(n,i)&&!m(f,i),ipod:m(t,i),tablet:!m(n,i)&&m(r,i)&&!m(f,i),device:(m(n,i)||m(t,i)||m(r,i))&&!m(f,i)},amazon:{phone:m(b,i),tablet:!m(b,i)&&m(l,i),device:m(b,i)||m(l,i)},android:{phone:!m(f,i)&&m(b,i)||!m(f,i)&&m(a,i),tablet:!m(f,i)&&!m(b,i)&&!m(a,i)&&(m(l,i)||m(p,i)),device:!m(f,i)&&(m(b,i)||m(l,i)||m(a,i)||m(p,i))||m(/\bokhttp\b/i,i)},windows:{phone:m(f,i),tablet:m(s,i),device:m(f,i)||m(s,i)},other:{blackberry:m(u,i),blackberry10:m(c,i),opera:m(h,i),firefox:m(w,i),chrome:m(v,i),device:m(u,i)||m(c,i)||m(h,i)||m(w,i)||m(v,i)}};return d.any=d.apple.device||d.android.device||d.windows.device||d.other.device,d.phone=d.apple.phone||d.android.phone||d.windows.phone,d.tablet=d.apple.tablet||d.android.tablet||d.windows.tablet,d} true&&module.exports&&"undefined"==typeof window?module.exports=i: true&&module.exports&&"undefined"!=typeof window?(module.exports=i(),module.exports.isMobile=i): true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (e.isMobile=i()),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):undefined}(this);
@@ -40728,537 +40895,6 @@ MiniSignal.MiniSignalBinding = MiniSignalBinding;
 exports['default'] = MiniSignal;
 module.exports = exports['default'];
 
-
-/***/ }),
-
-/***/ "./node_modules/node-libs-browser/node_modules/punycode/punycode.js":
-/*!**************************************************************************!*\
-  !*** ./node_modules/node-libs-browser/node_modules/punycode/punycode.js ***!
-  \**************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathias */
-;(function(root) {
-
-	/** Detect free variables */
-	var freeExports =  true && exports &&
-		!exports.nodeType && exports;
-	var freeModule =  true && module &&
-		!module.nodeType && module;
-	var freeGlobal = typeof global == 'object' && global;
-	if (
-		freeGlobal.global === freeGlobal ||
-		freeGlobal.window === freeGlobal ||
-		freeGlobal.self === freeGlobal
-	) {
-		root = freeGlobal;
-	}
-
-	/**
-	 * The `punycode` object.
-	 * @name punycode
-	 * @type Object
-	 */
-	var punycode,
-
-	/** Highest positive signed 32-bit float value */
-	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
-
-	/** Bootstring parameters */
-	base = 36,
-	tMin = 1,
-	tMax = 26,
-	skew = 38,
-	damp = 700,
-	initialBias = 72,
-	initialN = 128, // 0x80
-	delimiter = '-', // '\x2D'
-
-	/** Regular expressions */
-	regexPunycode = /^xn--/,
-	regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
-	regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
-
-	/** Error messages */
-	errors = {
-		'overflow': 'Overflow: input needs wider integers to process',
-		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
-		'invalid-input': 'Invalid input'
-	},
-
-	/** Convenience shortcuts */
-	baseMinusTMin = base - tMin,
-	floor = Math.floor,
-	stringFromCharCode = String.fromCharCode,
-
-	/** Temporary variable */
-	key;
-
-	/*--------------------------------------------------------------------------*/
-
-	/**
-	 * A generic error utility function.
-	 * @private
-	 * @param {String} type The error type.
-	 * @returns {Error} Throws a `RangeError` with the applicable error message.
-	 */
-	function error(type) {
-		throw new RangeError(errors[type]);
-	}
-
-	/**
-	 * A generic `Array#map` utility function.
-	 * @private
-	 * @param {Array} array The array to iterate over.
-	 * @param {Function} callback The function that gets called for every array
-	 * item.
-	 * @returns {Array} A new array of values returned by the callback function.
-	 */
-	function map(array, fn) {
-		var length = array.length;
-		var result = [];
-		while (length--) {
-			result[length] = fn(array[length]);
-		}
-		return result;
-	}
-
-	/**
-	 * A simple `Array#map`-like wrapper to work with domain name strings or email
-	 * addresses.
-	 * @private
-	 * @param {String} domain The domain name or email address.
-	 * @param {Function} callback The function that gets called for every
-	 * character.
-	 * @returns {Array} A new string of characters returned by the callback
-	 * function.
-	 */
-	function mapDomain(string, fn) {
-		var parts = string.split('@');
-		var result = '';
-		if (parts.length > 1) {
-			// In email addresses, only the domain name should be punycoded. Leave
-			// the local part (i.e. everything up to `@`) intact.
-			result = parts[0] + '@';
-			string = parts[1];
-		}
-		// Avoid `split(regex)` for IE8 compatibility. See #17.
-		string = string.replace(regexSeparators, '\x2E');
-		var labels = string.split('.');
-		var encoded = map(labels, fn).join('.');
-		return result + encoded;
-	}
-
-	/**
-	 * Creates an array containing the numeric code points of each Unicode
-	 * character in the string. While JavaScript uses UCS-2 internally,
-	 * this function will convert a pair of surrogate halves (each of which
-	 * UCS-2 exposes as separate characters) into a single code point,
-	 * matching UTF-16.
-	 * @see `punycode.ucs2.encode`
-	 * @see <https://mathiasbynens.be/notes/javascript-encoding>
-	 * @memberOf punycode.ucs2
-	 * @name decode
-	 * @param {String} string The Unicode input string (UCS-2).
-	 * @returns {Array} The new array of code points.
-	 */
-	function ucs2decode(string) {
-		var output = [],
-		    counter = 0,
-		    length = string.length,
-		    value,
-		    extra;
-		while (counter < length) {
-			value = string.charCodeAt(counter++);
-			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-				// high surrogate, and there is a next character
-				extra = string.charCodeAt(counter++);
-				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-				} else {
-					// unmatched surrogate; only append this code unit, in case the next
-					// code unit is the high surrogate of a surrogate pair
-					output.push(value);
-					counter--;
-				}
-			} else {
-				output.push(value);
-			}
-		}
-		return output;
-	}
-
-	/**
-	 * Creates a string based on an array of numeric code points.
-	 * @see `punycode.ucs2.decode`
-	 * @memberOf punycode.ucs2
-	 * @name encode
-	 * @param {Array} codePoints The array of numeric code points.
-	 * @returns {String} The new Unicode string (UCS-2).
-	 */
-	function ucs2encode(array) {
-		return map(array, function(value) {
-			var output = '';
-			if (value > 0xFFFF) {
-				value -= 0x10000;
-				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
-				value = 0xDC00 | value & 0x3FF;
-			}
-			output += stringFromCharCode(value);
-			return output;
-		}).join('');
-	}
-
-	/**
-	 * Converts a basic code point into a digit/integer.
-	 * @see `digitToBasic()`
-	 * @private
-	 * @param {Number} codePoint The basic numeric code point value.
-	 * @returns {Number} The numeric value of a basic code point (for use in
-	 * representing integers) in the range `0` to `base - 1`, or `base` if
-	 * the code point does not represent a value.
-	 */
-	function basicToDigit(codePoint) {
-		if (codePoint - 48 < 10) {
-			return codePoint - 22;
-		}
-		if (codePoint - 65 < 26) {
-			return codePoint - 65;
-		}
-		if (codePoint - 97 < 26) {
-			return codePoint - 97;
-		}
-		return base;
-	}
-
-	/**
-	 * Converts a digit/integer into a basic code point.
-	 * @see `basicToDigit()`
-	 * @private
-	 * @param {Number} digit The numeric value of a basic code point.
-	 * @returns {Number} The basic code point whose value (when used for
-	 * representing integers) is `digit`, which needs to be in the range
-	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
-	 * used; else, the lowercase form is used. The behavior is undefined
-	 * if `flag` is non-zero and `digit` has no uppercase form.
-	 */
-	function digitToBasic(digit, flag) {
-		//  0..25 map to ASCII a..z or A..Z
-		// 26..35 map to ASCII 0..9
-		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
-	}
-
-	/**
-	 * Bias adaptation function as per section 3.4 of RFC 3492.
-	 * https://tools.ietf.org/html/rfc3492#section-3.4
-	 * @private
-	 */
-	function adapt(delta, numPoints, firstTime) {
-		var k = 0;
-		delta = firstTime ? floor(delta / damp) : delta >> 1;
-		delta += floor(delta / numPoints);
-		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
-			delta = floor(delta / baseMinusTMin);
-		}
-		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
-	}
-
-	/**
-	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
-	 * symbols.
-	 * @memberOf punycode
-	 * @param {String} input The Punycode string of ASCII-only symbols.
-	 * @returns {String} The resulting string of Unicode symbols.
-	 */
-	function decode(input) {
-		// Don't use UCS-2
-		var output = [],
-		    inputLength = input.length,
-		    out,
-		    i = 0,
-		    n = initialN,
-		    bias = initialBias,
-		    basic,
-		    j,
-		    index,
-		    oldi,
-		    w,
-		    k,
-		    digit,
-		    t,
-		    /** Cached calculation results */
-		    baseMinusT;
-
-		// Handle the basic code points: let `basic` be the number of input code
-		// points before the last delimiter, or `0` if there is none, then copy
-		// the first basic code points to the output.
-
-		basic = input.lastIndexOf(delimiter);
-		if (basic < 0) {
-			basic = 0;
-		}
-
-		for (j = 0; j < basic; ++j) {
-			// if it's not a basic code point
-			if (input.charCodeAt(j) >= 0x80) {
-				error('not-basic');
-			}
-			output.push(input.charCodeAt(j));
-		}
-
-		// Main decoding loop: start just after the last delimiter if any basic code
-		// points were copied; start at the beginning otherwise.
-
-		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
-
-			// `index` is the index of the next character to be consumed.
-			// Decode a generalized variable-length integer into `delta`,
-			// which gets added to `i`. The overflow checking is easier
-			// if we increase `i` as we go, then subtract off its starting
-			// value at the end to obtain `delta`.
-			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
-
-				if (index >= inputLength) {
-					error('invalid-input');
-				}
-
-				digit = basicToDigit(input.charCodeAt(index++));
-
-				if (digit >= base || digit > floor((maxInt - i) / w)) {
-					error('overflow');
-				}
-
-				i += digit * w;
-				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-
-				if (digit < t) {
-					break;
-				}
-
-				baseMinusT = base - t;
-				if (w > floor(maxInt / baseMinusT)) {
-					error('overflow');
-				}
-
-				w *= baseMinusT;
-
-			}
-
-			out = output.length + 1;
-			bias = adapt(i - oldi, out, oldi == 0);
-
-			// `i` was supposed to wrap around from `out` to `0`,
-			// incrementing `n` each time, so we'll fix that now:
-			if (floor(i / out) > maxInt - n) {
-				error('overflow');
-			}
-
-			n += floor(i / out);
-			i %= out;
-
-			// Insert `n` at position `i` of the output
-			output.splice(i++, 0, n);
-
-		}
-
-		return ucs2encode(output);
-	}
-
-	/**
-	 * Converts a string of Unicode symbols (e.g. a domain name label) to a
-	 * Punycode string of ASCII-only symbols.
-	 * @memberOf punycode
-	 * @param {String} input The string of Unicode symbols.
-	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
-	 */
-	function encode(input) {
-		var n,
-		    delta,
-		    handledCPCount,
-		    basicLength,
-		    bias,
-		    j,
-		    m,
-		    q,
-		    k,
-		    t,
-		    currentValue,
-		    output = [],
-		    /** `inputLength` will hold the number of code points in `input`. */
-		    inputLength,
-		    /** Cached calculation results */
-		    handledCPCountPlusOne,
-		    baseMinusT,
-		    qMinusT;
-
-		// Convert the input in UCS-2 to Unicode
-		input = ucs2decode(input);
-
-		// Cache the length
-		inputLength = input.length;
-
-		// Initialize the state
-		n = initialN;
-		delta = 0;
-		bias = initialBias;
-
-		// Handle the basic code points
-		for (j = 0; j < inputLength; ++j) {
-			currentValue = input[j];
-			if (currentValue < 0x80) {
-				output.push(stringFromCharCode(currentValue));
-			}
-		}
-
-		handledCPCount = basicLength = output.length;
-
-		// `handledCPCount` is the number of code points that have been handled;
-		// `basicLength` is the number of basic code points.
-
-		// Finish the basic string - if it is not empty - with a delimiter
-		if (basicLength) {
-			output.push(delimiter);
-		}
-
-		// Main encoding loop:
-		while (handledCPCount < inputLength) {
-
-			// All non-basic code points < n have been handled already. Find the next
-			// larger one:
-			for (m = maxInt, j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
-				if (currentValue >= n && currentValue < m) {
-					m = currentValue;
-				}
-			}
-
-			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
-			// but guard against overflow
-			handledCPCountPlusOne = handledCPCount + 1;
-			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
-				error('overflow');
-			}
-
-			delta += (m - n) * handledCPCountPlusOne;
-			n = m;
-
-			for (j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
-
-				if (currentValue < n && ++delta > maxInt) {
-					error('overflow');
-				}
-
-				if (currentValue == n) {
-					// Represent delta as a generalized variable-length integer
-					for (q = delta, k = base; /* no condition */; k += base) {
-						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-						if (q < t) {
-							break;
-						}
-						qMinusT = q - t;
-						baseMinusT = base - t;
-						output.push(
-							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
-						);
-						q = floor(qMinusT / baseMinusT);
-					}
-
-					output.push(stringFromCharCode(digitToBasic(q, 0)));
-					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
-					delta = 0;
-					++handledCPCount;
-				}
-			}
-
-			++delta;
-			++n;
-
-		}
-		return output.join('');
-	}
-
-	/**
-	 * Converts a Punycode string representing a domain name or an email address
-	 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
-	 * it doesn't matter if you call it on a string that has already been
-	 * converted to Unicode.
-	 * @memberOf punycode
-	 * @param {String} input The Punycoded domain name or email address to
-	 * convert to Unicode.
-	 * @returns {String} The Unicode representation of the given Punycode
-	 * string.
-	 */
-	function toUnicode(input) {
-		return mapDomain(input, function(string) {
-			return regexPunycode.test(string)
-				? decode(string.slice(4).toLowerCase())
-				: string;
-		});
-	}
-
-	/**
-	 * Converts a Unicode string representing a domain name or an email address to
-	 * Punycode. Only the non-ASCII parts of the domain name will be converted,
-	 * i.e. it doesn't matter if you call it with a domain that's already in
-	 * ASCII.
-	 * @memberOf punycode
-	 * @param {String} input The domain name or email address to convert, as a
-	 * Unicode string.
-	 * @returns {String} The Punycode representation of the given domain name or
-	 * email address.
-	 */
-	function toASCII(input) {
-		return mapDomain(input, function(string) {
-			return regexNonASCII.test(string)
-				? 'xn--' + encode(string)
-				: string;
-		});
-	}
-
-	/*--------------------------------------------------------------------------*/
-
-	/** Define the public API */
-	punycode = {
-		/**
-		 * A string representing the current Punycode.js version number.
-		 * @memberOf punycode
-		 * @type String
-		 */
-		'version': '1.4.1',
-		/**
-		 * An object of methods to convert from JavaScript's internal character
-		 * representation (UCS-2) to Unicode code points, and back.
-		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
-		 * @memberOf punycode
-		 * @type Object
-		 */
-		'ucs2': {
-			'decode': ucs2decode,
-			'encode': ucs2encode
-		},
-		'decode': decode,
-		'encode': encode,
-		'toASCII': toASCII,
-		'toUnicode': toUnicode
-	};
-
-	/** Expose `punycode` */
-	// Some AMD build optimizers, like r.js, check for specific condition patterns
-	// like the following:
-	if (
-		true
-	) {
-		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
-			return punycode;
-		}).call(exports, __webpack_require__, exports, module),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {}
-
-}(this));
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module), __webpack_require__(/*! ./../../../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
@@ -41668,8 +41304,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "settings", function() { return _pixi_settings__WEBPACK_IMPORTED_MODULE_33__["settings"]; });
 
 /*!
- * pixi.js - v5.0.0-rc.3
- * Compiled Tue, 30 Apr 2019 02:21:00 UTC
+ * pixi.js - v5.0.3
+ * Compiled Sun, 19 May 2019 19:03:31 UTC
  *
  * pixi.js is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -42380,6 +42016,31 @@ function useDeprecated()
                 return this.resource && this.resource.url;
             },
         },
+        /**
+         * @name PIXI.BaseTexture#source
+         * @type {HTMLImageElement|HTMLCanvasElement|HTMLVideoElement|SVGElement}
+         * @deprecated since 5.0.0
+         * @readonly
+         * @see PIXI.resources.BaseImageResource#source
+         */
+        source: {
+            get: function get()
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.BaseTexture.source property has been moved, use `resource.source`');
+
+                return this.resource && this.resource.source;
+            },
+            set: function set(source)
+            {
+                Object(_pixi_utils__WEBPACK_IMPORTED_MODULE_5__["deprecation"])(v5, 'PIXI.BaseTexture.source property has been moved, use `resource.source` '
+                    + 'if you want to set HTMLCanvasElement. Otherwise, create new BaseTexture.');
+
+                if (this.resource)
+                {
+                    this.resource.source = source;
+                }
+            },
+        },
     });
 
     /**
@@ -42832,7 +42493,7 @@ _pixi_app__WEBPACK_IMPORTED_MODULE_6__["Application"].registerPlugin(_pixi_loade
  * @name VERSION
  * @type {string}
  */
-var VERSION = '5.0.0-rc.3';
+var VERSION = '5.0.3';
 
 /**
  * @namespace PIXI
@@ -43073,6 +42734,537 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
+
+/***/ }),
+
+/***/ "./node_modules/punycode/punycode.js":
+/*!*******************************************!*\
+  !*** ./node_modules/punycode/punycode.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.3.2 by @mathias */
+;(function(root) {
+
+	/** Detect free variables */
+	var freeExports =  true && exports &&
+		!exports.nodeType && exports;
+	var freeModule =  true && module &&
+		!module.nodeType && module;
+	var freeGlobal = typeof global == 'object' && global;
+	if (
+		freeGlobal.global === freeGlobal ||
+		freeGlobal.window === freeGlobal ||
+		freeGlobal.self === freeGlobal
+	) {
+		root = freeGlobal;
+	}
+
+	/**
+	 * The `punycode` object.
+	 * @name punycode
+	 * @type Object
+	 */
+	var punycode,
+
+	/** Highest positive signed 32-bit float value */
+	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
+
+	/** Bootstring parameters */
+	base = 36,
+	tMin = 1,
+	tMax = 26,
+	skew = 38,
+	damp = 700,
+	initialBias = 72,
+	initialN = 128, // 0x80
+	delimiter = '-', // '\x2D'
+
+	/** Regular expressions */
+	regexPunycode = /^xn--/,
+	regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
+	regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
+
+	/** Error messages */
+	errors = {
+		'overflow': 'Overflow: input needs wider integers to process',
+		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+		'invalid-input': 'Invalid input'
+	},
+
+	/** Convenience shortcuts */
+	baseMinusTMin = base - tMin,
+	floor = Math.floor,
+	stringFromCharCode = String.fromCharCode,
+
+	/** Temporary variable */
+	key;
+
+	/*--------------------------------------------------------------------------*/
+
+	/**
+	 * A generic error utility function.
+	 * @private
+	 * @param {String} type The error type.
+	 * @returns {Error} Throws a `RangeError` with the applicable error message.
+	 */
+	function error(type) {
+		throw RangeError(errors[type]);
+	}
+
+	/**
+	 * A generic `Array#map` utility function.
+	 * @private
+	 * @param {Array} array The array to iterate over.
+	 * @param {Function} callback The function that gets called for every array
+	 * item.
+	 * @returns {Array} A new array of values returned by the callback function.
+	 */
+	function map(array, fn) {
+		var length = array.length;
+		var result = [];
+		while (length--) {
+			result[length] = fn(array[length]);
+		}
+		return result;
+	}
+
+	/**
+	 * A simple `Array#map`-like wrapper to work with domain name strings or email
+	 * addresses.
+	 * @private
+	 * @param {String} domain The domain name or email address.
+	 * @param {Function} callback The function that gets called for every
+	 * character.
+	 * @returns {Array} A new string of characters returned by the callback
+	 * function.
+	 */
+	function mapDomain(string, fn) {
+		var parts = string.split('@');
+		var result = '';
+		if (parts.length > 1) {
+			// In email addresses, only the domain name should be punycoded. Leave
+			// the local part (i.e. everything up to `@`) intact.
+			result = parts[0] + '@';
+			string = parts[1];
+		}
+		// Avoid `split(regex)` for IE8 compatibility. See #17.
+		string = string.replace(regexSeparators, '\x2E');
+		var labels = string.split('.');
+		var encoded = map(labels, fn).join('.');
+		return result + encoded;
+	}
+
+	/**
+	 * Creates an array containing the numeric code points of each Unicode
+	 * character in the string. While JavaScript uses UCS-2 internally,
+	 * this function will convert a pair of surrogate halves (each of which
+	 * UCS-2 exposes as separate characters) into a single code point,
+	 * matching UTF-16.
+	 * @see `punycode.ucs2.encode`
+	 * @see <https://mathiasbynens.be/notes/javascript-encoding>
+	 * @memberOf punycode.ucs2
+	 * @name decode
+	 * @param {String} string The Unicode input string (UCS-2).
+	 * @returns {Array} The new array of code points.
+	 */
+	function ucs2decode(string) {
+		var output = [],
+		    counter = 0,
+		    length = string.length,
+		    value,
+		    extra;
+		while (counter < length) {
+			value = string.charCodeAt(counter++);
+			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+				// high surrogate, and there is a next character
+				extra = string.charCodeAt(counter++);
+				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+				} else {
+					// unmatched surrogate; only append this code unit, in case the next
+					// code unit is the high surrogate of a surrogate pair
+					output.push(value);
+					counter--;
+				}
+			} else {
+				output.push(value);
+			}
+		}
+		return output;
+	}
+
+	/**
+	 * Creates a string based on an array of numeric code points.
+	 * @see `punycode.ucs2.decode`
+	 * @memberOf punycode.ucs2
+	 * @name encode
+	 * @param {Array} codePoints The array of numeric code points.
+	 * @returns {String} The new Unicode string (UCS-2).
+	 */
+	function ucs2encode(array) {
+		return map(array, function(value) {
+			var output = '';
+			if (value > 0xFFFF) {
+				value -= 0x10000;
+				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+				value = 0xDC00 | value & 0x3FF;
+			}
+			output += stringFromCharCode(value);
+			return output;
+		}).join('');
+	}
+
+	/**
+	 * Converts a basic code point into a digit/integer.
+	 * @see `digitToBasic()`
+	 * @private
+	 * @param {Number} codePoint The basic numeric code point value.
+	 * @returns {Number} The numeric value of a basic code point (for use in
+	 * representing integers) in the range `0` to `base - 1`, or `base` if
+	 * the code point does not represent a value.
+	 */
+	function basicToDigit(codePoint) {
+		if (codePoint - 48 < 10) {
+			return codePoint - 22;
+		}
+		if (codePoint - 65 < 26) {
+			return codePoint - 65;
+		}
+		if (codePoint - 97 < 26) {
+			return codePoint - 97;
+		}
+		return base;
+	}
+
+	/**
+	 * Converts a digit/integer into a basic code point.
+	 * @see `basicToDigit()`
+	 * @private
+	 * @param {Number} digit The numeric value of a basic code point.
+	 * @returns {Number} The basic code point whose value (when used for
+	 * representing integers) is `digit`, which needs to be in the range
+	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+	 * used; else, the lowercase form is used. The behavior is undefined
+	 * if `flag` is non-zero and `digit` has no uppercase form.
+	 */
+	function digitToBasic(digit, flag) {
+		//  0..25 map to ASCII a..z or A..Z
+		// 26..35 map to ASCII 0..9
+		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+	}
+
+	/**
+	 * Bias adaptation function as per section 3.4 of RFC 3492.
+	 * http://tools.ietf.org/html/rfc3492#section-3.4
+	 * @private
+	 */
+	function adapt(delta, numPoints, firstTime) {
+		var k = 0;
+		delta = firstTime ? floor(delta / damp) : delta >> 1;
+		delta += floor(delta / numPoints);
+		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
+			delta = floor(delta / baseMinusTMin);
+		}
+		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+	}
+
+	/**
+	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
+	 * symbols.
+	 * @memberOf punycode
+	 * @param {String} input The Punycode string of ASCII-only symbols.
+	 * @returns {String} The resulting string of Unicode symbols.
+	 */
+	function decode(input) {
+		// Don't use UCS-2
+		var output = [],
+		    inputLength = input.length,
+		    out,
+		    i = 0,
+		    n = initialN,
+		    bias = initialBias,
+		    basic,
+		    j,
+		    index,
+		    oldi,
+		    w,
+		    k,
+		    digit,
+		    t,
+		    /** Cached calculation results */
+		    baseMinusT;
+
+		// Handle the basic code points: let `basic` be the number of input code
+		// points before the last delimiter, or `0` if there is none, then copy
+		// the first basic code points to the output.
+
+		basic = input.lastIndexOf(delimiter);
+		if (basic < 0) {
+			basic = 0;
+		}
+
+		for (j = 0; j < basic; ++j) {
+			// if it's not a basic code point
+			if (input.charCodeAt(j) >= 0x80) {
+				error('not-basic');
+			}
+			output.push(input.charCodeAt(j));
+		}
+
+		// Main decoding loop: start just after the last delimiter if any basic code
+		// points were copied; start at the beginning otherwise.
+
+		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
+
+			// `index` is the index of the next character to be consumed.
+			// Decode a generalized variable-length integer into `delta`,
+			// which gets added to `i`. The overflow checking is easier
+			// if we increase `i` as we go, then subtract off its starting
+			// value at the end to obtain `delta`.
+			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
+
+				if (index >= inputLength) {
+					error('invalid-input');
+				}
+
+				digit = basicToDigit(input.charCodeAt(index++));
+
+				if (digit >= base || digit > floor((maxInt - i) / w)) {
+					error('overflow');
+				}
+
+				i += digit * w;
+				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+
+				if (digit < t) {
+					break;
+				}
+
+				baseMinusT = base - t;
+				if (w > floor(maxInt / baseMinusT)) {
+					error('overflow');
+				}
+
+				w *= baseMinusT;
+
+			}
+
+			out = output.length + 1;
+			bias = adapt(i - oldi, out, oldi == 0);
+
+			// `i` was supposed to wrap around from `out` to `0`,
+			// incrementing `n` each time, so we'll fix that now:
+			if (floor(i / out) > maxInt - n) {
+				error('overflow');
+			}
+
+			n += floor(i / out);
+			i %= out;
+
+			// Insert `n` at position `i` of the output
+			output.splice(i++, 0, n);
+
+		}
+
+		return ucs2encode(output);
+	}
+
+	/**
+	 * Converts a string of Unicode symbols (e.g. a domain name label) to a
+	 * Punycode string of ASCII-only symbols.
+	 * @memberOf punycode
+	 * @param {String} input The string of Unicode symbols.
+	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
+	 */
+	function encode(input) {
+		var n,
+		    delta,
+		    handledCPCount,
+		    basicLength,
+		    bias,
+		    j,
+		    m,
+		    q,
+		    k,
+		    t,
+		    currentValue,
+		    output = [],
+		    /** `inputLength` will hold the number of code points in `input`. */
+		    inputLength,
+		    /** Cached calculation results */
+		    handledCPCountPlusOne,
+		    baseMinusT,
+		    qMinusT;
+
+		// Convert the input in UCS-2 to Unicode
+		input = ucs2decode(input);
+
+		// Cache the length
+		inputLength = input.length;
+
+		// Initialize the state
+		n = initialN;
+		delta = 0;
+		bias = initialBias;
+
+		// Handle the basic code points
+		for (j = 0; j < inputLength; ++j) {
+			currentValue = input[j];
+			if (currentValue < 0x80) {
+				output.push(stringFromCharCode(currentValue));
+			}
+		}
+
+		handledCPCount = basicLength = output.length;
+
+		// `handledCPCount` is the number of code points that have been handled;
+		// `basicLength` is the number of basic code points.
+
+		// Finish the basic string - if it is not empty - with a delimiter
+		if (basicLength) {
+			output.push(delimiter);
+		}
+
+		// Main encoding loop:
+		while (handledCPCount < inputLength) {
+
+			// All non-basic code points < n have been handled already. Find the next
+			// larger one:
+			for (m = maxInt, j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+				if (currentValue >= n && currentValue < m) {
+					m = currentValue;
+				}
+			}
+
+			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+			// but guard against overflow
+			handledCPCountPlusOne = handledCPCount + 1;
+			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+				error('overflow');
+			}
+
+			delta += (m - n) * handledCPCountPlusOne;
+			n = m;
+
+			for (j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+
+				if (currentValue < n && ++delta > maxInt) {
+					error('overflow');
+				}
+
+				if (currentValue == n) {
+					// Represent delta as a generalized variable-length integer
+					for (q = delta, k = base; /* no condition */; k += base) {
+						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+						if (q < t) {
+							break;
+						}
+						qMinusT = q - t;
+						baseMinusT = base - t;
+						output.push(
+							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+						);
+						q = floor(qMinusT / baseMinusT);
+					}
+
+					output.push(stringFromCharCode(digitToBasic(q, 0)));
+					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+					delta = 0;
+					++handledCPCount;
+				}
+			}
+
+			++delta;
+			++n;
+
+		}
+		return output.join('');
+	}
+
+	/**
+	 * Converts a Punycode string representing a domain name or an email address
+	 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
+	 * it doesn't matter if you call it on a string that has already been
+	 * converted to Unicode.
+	 * @memberOf punycode
+	 * @param {String} input The Punycoded domain name or email address to
+	 * convert to Unicode.
+	 * @returns {String} The Unicode representation of the given Punycode
+	 * string.
+	 */
+	function toUnicode(input) {
+		return mapDomain(input, function(string) {
+			return regexPunycode.test(string)
+				? decode(string.slice(4).toLowerCase())
+				: string;
+		});
+	}
+
+	/**
+	 * Converts a Unicode string representing a domain name or an email address to
+	 * Punycode. Only the non-ASCII parts of the domain name will be converted,
+	 * i.e. it doesn't matter if you call it with a domain that's already in
+	 * ASCII.
+	 * @memberOf punycode
+	 * @param {String} input The domain name or email address to convert, as a
+	 * Unicode string.
+	 * @returns {String} The Punycode representation of the given domain name or
+	 * email address.
+	 */
+	function toASCII(input) {
+		return mapDomain(input, function(string) {
+			return regexNonASCII.test(string)
+				? 'xn--' + encode(string)
+				: string;
+		});
+	}
+
+	/*--------------------------------------------------------------------------*/
+
+	/** Define the public API */
+	punycode = {
+		/**
+		 * A string representing the current Punycode.js version number.
+		 * @memberOf punycode
+		 * @type String
+		 */
+		'version': '1.3.2',
+		/**
+		 * An object of methods to convert from JavaScript's internal character
+		 * representation (UCS-2) to Unicode code points, and back.
+		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
+		 * @memberOf punycode
+		 * @type Object
+		 */
+		'ucs2': {
+			'decode': ucs2decode,
+			'encode': ucs2encode
+		},
+		'decode': decode,
+		'encode': encode,
+		'toASCII': toASCII,
+		'toUnicode': toUnicode
+	};
+
+	/** Expose `punycode` */
+	// Some AMD build optimizers, like r.js, check for specific condition patterns
+	// like the following:
+	if (
+		true
+	) {
+		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
+			return punycode;
+		}).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+
+}(this));
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module), __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
@@ -46007,7 +46199,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 
 
-var punycode = __webpack_require__(/*! punycode */ "./node_modules/node-libs-browser/node_modules/punycode/punycode.js");
+var punycode = __webpack_require__(/*! punycode */ "./node_modules/punycode/punycode.js");
 var util = __webpack_require__(/*! ./util */ "./node_modules/url/util.js");
 
 exports.parse = urlParse;
@@ -48099,7 +48291,7 @@ g = (function() {
 
 try {
 	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1, eval)("this");
+	g = g || new Function("return this")();
 } catch (e) {
 	// This works if the window reference is available
 	if (typeof window === "object") g = window;
@@ -48842,7 +49034,7 @@ class InputSystem {
     this._handlers = [];
     window.addEventListener("keydown", event => {
       if (event.repeat) {
-        console.log(event.key);
+        this._emit(event.key.toLowerCase() + "/press");
       } else {
         this._emit(event.key.toLowerCase() + "/down");
       }
@@ -48856,16 +49048,6 @@ class InputSystem {
       }, this);
     } else {
       this._registerEvent(key.toLowerCase() + "/down", callback, params, scope);
-    }
-  }
-
-  keyPress(key, callback, frequency, params, scope) {
-    if (Array.isArray(key)) {
-      key.forEach(key => {
-        this._registerEvent(key.toLowerCase() + "/press", callback, params, scope);
-      }, this);
-    } else {
-      this._registerEvent(key.toLowerCase() + "/press", callback, params, scope);
     }
   }
 
@@ -49165,19 +49347,25 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Delay {
-  constructor(ticker, callback, finishTime = 1) {
+  constructor(ticker, callback, finishTime = 1, params = [], scope) {
     this._ticker = ticker;
     this._callback = callback;
+    this._params = params;
+    this._scope = scope;
     this._finishTime = finishTime;
     this._elapsedTime = 0;
 
     this._ticker.add(this._tickerUpdate, this);
   }
 
+  get elapsedTime() {
+    return this._elapsedTime;
+  }
+
   finish() {
     this.cancel();
 
-    this._callback();
+    this._igniteCallback();
   }
 
   cancel() {
@@ -49190,7 +49378,15 @@ class Delay {
     if (this._elapsedTime >= this._finishTime) {
       this._ticker.remove(this._tickerUpdate, this);
 
-      this._callback();
+      this._igniteCallback();
+    }
+  }
+
+  _igniteCallback() {
+    if (this._scope) {
+      this._callback.call(this._scope, ...this._params);
+    } else {
+      this._callback(...this._params);
     }
   }
 
@@ -49209,24 +49405,50 @@ class Delay {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Delay__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Delay */ "./src/js/timer/Delay.js");
+
+
 
 
 class Repeat {
-  constructor(ticker, callback, intervalTime = 1, finalIteration = -1) {
+  constructor(ticker, callback, intervalTime = 1, finalIteration = -1, params = [], scope) {
     this._ticker = ticker;
     this._callback = callback;
-    this._intervalTime = intervalTime;
-    this._finalIteration = finalIteration;
+    this._params = params;
+    this._scope = scope;
     this._elapsedTime = 0;
-    this._currentIteration = 0;
+    this._intervalTime = intervalTime;
+    this._lastStepTime = 0;
+    this._iteration = 0;
+    this._finalIteration = finalIteration;
 
     this._ticker.add(this._tickerUpdate, this);
+  }
+
+  get iteration() {
+    return this._iteration;
+  }
+
+  get finalIteration() {
+    return this._finalIteration;
+  }
+
+  get elapsedTime() {
+    return this._elapsedTime;
+  }
+
+  get intervalTime() {
+    return this._intervalTime;
+  }
+
+  set intervalTime(value) {
+    this._intervalTime = value;
   }
 
   finish() {
     this.cancel();
 
-    this._callback();
+    this._igniteCallback();
   }
 
   cancel() {
@@ -49236,14 +49458,23 @@ class Repeat {
   _tickerUpdate(deltaTime) {
     this._elapsedTime += deltaTime * 0.01;
 
-    if (this._elapsedTime >= this._intervalTime * (this._currentIteration + 1)) {
-      this._callback(this._currentIteration);
+    if (this._elapsedTime >= this._lastStepTime + this._intervalTime) {
+      this._igniteCallback(this._iteration);
 
-      this._currentIteration++;
+      this._iteration++;
+      this._lastStepTime = this._elapsedTime;
 
-      if (this._finalIteration >= 0 && this._currentIteration > this._finalIteration) {
+      if (this._finalIteration >= 0 && this._iteration > this._finalIteration) {
         this._ticker.remove(this._tickerUpdate, this);
       }
+    }
+  }
+
+  _igniteCallback() {
+    if (this._scope) {
+      this._callback.call(this._scope, ...this._params);
+    } else {
+      this._callback(...this._params);
     }
   }
 
@@ -49274,12 +49505,12 @@ class TimerSystem {
     this._ticker = ticker;
   }
 
-  delay(callback, delayTime) {
-    return new _Delay_js__WEBPACK_IMPORTED_MODULE_0__["default"](this._ticker, callback, delayTime);
+  delay(callback, delayTime, params, scope) {
+    return new _Delay_js__WEBPACK_IMPORTED_MODULE_0__["default"](this._ticker, callback, delayTime, params, scope);
   }
 
-  repeat(callback, intervalTime, iterations) {
-    return new _Repeat_js__WEBPACK_IMPORTED_MODULE_1__["default"](this._ticker, callback, intervalTime, iterations);
+  repeat(callback, intervalTime, iterations, params, scope) {
+    return new _Repeat_js__WEBPACK_IMPORTED_MODULE_1__["default"](this._ticker, callback, intervalTime, iterations, params, scope);
   }
 
   cancel(artifact) {
