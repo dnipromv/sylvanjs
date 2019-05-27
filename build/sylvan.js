@@ -49032,14 +49032,19 @@ __webpack_require__.r(__webpack_exports__);
 class InputSystem {
   constructor() {
     this._handlers = [];
+    this._pressState = new Map();
     window.addEventListener("keydown", event => {
       if (event.repeat) {
         this._emit(event.key.toLowerCase() + "/press");
       } else {
+        this._pressState.set(event.key.toLowerCase(), true);
+
         this._emit(event.key.toLowerCase() + "/down");
       }
     });
     window.addEventListener("keyup", event => {
+      this._pressState.set(event.key.toLowerCase(), false);
+
       this._emit(event.key.toLowerCase() + "/up");
     });
   }
@@ -49057,6 +49062,16 @@ class InputSystem {
       intervalTime,
       stepTime: Date.now()
     }, callback, params, scope], this);
+  }
+
+  isKeyDown(key) {
+    if (Array.isArray(key)) {
+      return key.reduce((state, key) => {
+        return state || this._pressState.get(key.toLowerCase());
+      }, false);
+    } else {
+      return this._pressState(key.toLowerCase());
+    }
   }
 
   _registerEvent(buttonKey, buttonState, callback, params = [], scope) {
