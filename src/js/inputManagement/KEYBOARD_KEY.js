@@ -5,6 +5,7 @@ export default {
     A: "A",
     S: "S",
     D: "D",
+    R: "R",
     UP: "ArrowUp",
     DOWN: "ArrowDown",
     LEFT: "ArrowLeft",

@@ -49146,6 +49146,7 @@ __webpack_require__.r(__webpack_exports__);
   A: "A",
   S: "S",
   D: "D",
+  R: "R",
   UP: "ArrowUp",
   DOWN: "ArrowDown",
   LEFT: "ArrowLeft",
@@ -49210,6 +49211,9 @@ class ResourceLoader extends pixi_js__WEBPACK_IMPORTED_MODULE_0__["Loader"] {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js");
+
+
 
 
 class ResourceRegistry {
@@ -49225,26 +49229,26 @@ class ResourceRegistry {
 
   _parseResource(resource) {
     switch (resource.type) {
-      case PIXI.loaders.Resource.TYPE.IMAGE:
+      case pixi_js__WEBPACK_IMPORTED_MODULE_0__["LoaderResource"].TYPE.IMAGE:
         if (resource.spritesheet) {
           return resource.spritesheet;
         } else {
           return resource.texture;
         }
 
-      case PIXI.loaders.Resource.TYPE.AUDIO:
+      case pixi_js__WEBPACK_IMPORTED_MODULE_0__["LoaderResource"].TYPE.AUDIO:
         return resource;
 
-      case PIXI.loaders.Resource.TYPE.VIDEO:
+      case pixi_js__WEBPACK_IMPORTED_MODULE_0__["LoaderResource"].TYPE.VIDEO:
         return resource;
 
-      case PIXI.loaders.Resource.TYPE.JSON:
+      case pixi_js__WEBPACK_IMPORTED_MODULE_0__["LoaderResource"].TYPE.JSON:
+        return resource.data;
+
+      case pixi_js__WEBPACK_IMPORTED_MODULE_0__["LoaderResource"].TYPE.XML:
         return resource;
 
-      case PIXI.loaders.Resource.TYPE.XML:
-        return resource;
-
-      case PIXI.loaders.Resource.TYPE.TEXT:
+      case pixi_js__WEBPACK_IMPORTED_MODULE_0__["LoaderResource"].TYPE.TEXT:
         return resource;
 
       default:

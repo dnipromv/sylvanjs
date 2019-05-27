@@ -1,5 +1,7 @@
 "use strict";
 
+import { LoaderResource  } from 'pixi.js';
+
 class ResourceRegistry {
     constructor() {
 
@@ -15,22 +17,22 @@ class ResourceRegistry {
 
     _parseResource(resource) {
         switch (resource.type) {
-            case PIXI.loaders.Resource.TYPE.IMAGE:
+            case LoaderResource.TYPE.IMAGE:
                 if (resource.spritesheet) {
                     return resource.spritesheet;
                 }
                 else {
                     return resource.texture;
                 }
-            case PIXI.loaders.Resource.TYPE.AUDIO:
+            case LoaderResource.TYPE.AUDIO:
                 return resource;
-            case PIXI.loaders.Resource.TYPE.VIDEO:
+            case LoaderResource.TYPE.VIDEO:
                 return resource;
-            case PIXI.loaders.Resource.TYPE.JSON:
+            case LoaderResource.TYPE.JSON:
+                return resource.data;
+            case LoaderResource.TYPE.XML:
                 return resource;
-            case PIXI.loaders.Resource.TYPE.XML:
-                return resource;
-            case PIXI.loaders.Resource.TYPE.TEXT:
+            case LoaderResource.TYPE.TEXT:
                 return resource;
             default:
                 return resource;
