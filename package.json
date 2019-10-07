@@ -1,13 +1,13 @@
 {
   "name": "sylvan.js",
   "version": "0.0.1",
-  "description": "Fast-paced multiplayer action game inspired by good old Snake",
+  "description": "HTML5 game framework built up around PIXI",
   "main": "index.js",
   "scripts": {
     "build": "webpack --progress --colors",
     "start": "webpack-dev-server --hot --inline"
   },
-  "author": "Mykyta Dniprovskyi",
+  "author": "Nowan (Mykyta Dniprovskyi)",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.1.2",
