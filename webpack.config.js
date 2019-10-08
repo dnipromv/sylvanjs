@@ -10,7 +10,7 @@ const MODULE_PATH = {
 
 module.exports = {
     mode: 'development',
-    entry: ['./src/index.js'],
+    entry: ['./index.js'],
     output: {
         filename: 'sylvan.js',
         path: path.resolve(__dirname, 'dist'),

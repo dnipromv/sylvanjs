@@ -1,7 +1,7 @@
 "use strict";
 
-import SylvanAPI from './js/SylvanAPI.js';
-import DevoteAPI from './js/DevoteAPI.js';
+import SylvanAPI from './src/js/SylvanAPI.js';
+import DevoteAPI from './src/js/DevoteAPI.js';
 
 function Sylvan() {
     SylvanAPI.call(this);
@@ -10,4 +10,4 @@ function Sylvan() {
 
 Sylvan.prototype = Object.create(SylvanAPI.prototype);
 
-module.exports.Sylvan = new Sylvan();
+exports.Sylvan = new Sylvan();
