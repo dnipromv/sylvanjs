@@ -1,7 +1,7 @@
 {
   "name": "sylvan.js",
-  "version": "0.0.1",
-  "description": "HTML5 game framework built up around PIXI",
+  "version": "0.0.2",
+  "description": "HTML5 game framework built on top of PIXI rendering engine",
   "main": "index.js",
   "scripts": {
     "build": "webpack --progress --colors",
