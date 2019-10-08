@@ -1,8 +1,10 @@
 {
   "name": "sylvan.js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "HTML5 game framework built on top of PIXI rendering engine",
-  "main": "index.js",
+  "standalone": true,
+  "main": "dist/sylvan.js",
+  "bundle": "dist/sylvan.js",
   "scripts": {
     "build": "webpack --progress --colors",
     "start": "webpack-dev-server --hot --inline"
@@ -13,10 +15,6 @@
     "type": "git",
     "url": "git+https://github.com/Nowan/sylvanjs.git"
   },
-  "files": [
-    "dist/sylvan.js",
-    "dist/sylvan.js.map"
-  ],
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",

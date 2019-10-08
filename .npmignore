@@ -1,2 +1,5 @@
 index.js
+webpack.config.js
+node_modules/*
 src/*
+example/*
