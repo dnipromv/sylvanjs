@@ -8,11 +8,14 @@
     "start": "webpack-dev-server --hot --inline"
   },
   "author": "Nowan (Mykyta Dniprovskyi)",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Nowan/sylvanjs.git"
   },
+  "files": [ 
+    "dist/sylvan.js", "dist/sylvan.js.map" 
+  ],
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
@@ -35,8 +38,6 @@
   "dependencies": {
     "@babel/runtime": "^7.1.5",
     "animejs": "^3.0.1",
-    "pixi-tilemap": "^1.2.4",
-    "pixi.js": "^5.0.0",
     "victor": "^1.1.0"
   }
 }
