@@ -48306,6 +48306,41 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./node_modules/webpack/buildin/harmony-module.js":
+/*!*******************************************!*\
+  !*** (webpack)/buildin/harmony-module.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function(originalModule) {
+	if (!originalModule.webpackPolyfill) {
+		var module = Object.create(originalModule);
+		// module.parent = undefined by default
+		if (!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		Object.defineProperty(module, "exports", {
+			enumerable: true
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/webpack/buildin/module.js":
 /*!***********************************!*\
   !*** (webpack)/buildin/module.js ***!
@@ -48343,12 +48378,12 @@ module.exports = function(module) {
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
-/*! exports provided: default */
+/*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _js_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./js/SylvanAPI.js */ "./src/js/SylvanAPI.js");
+/* WEBPACK VAR INJECTION */(function(module) {/* harmony import */ var _js_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./js/SylvanAPI.js */ "./src/js/SylvanAPI.js");
 /* harmony import */ var _js_DevoteAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./js/DevoteAPI.js */ "./src/js/DevoteAPI.js");
 
 
@@ -48361,7 +48396,8 @@ function Sylvan() {
 }
 
 Sylvan.prototype = Object.create(_js_SylvanAPI_js__WEBPACK_IMPORTED_MODULE_0__["default"].prototype);
-/* harmony default export */ __webpack_exports__["default"] = (new Sylvan());
+module.exports.Sylvan = new Sylvan();
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/webpack/buildin/harmony-module.js */ "./node_modules/webpack/buildin/harmony-module.js")(module)))
 
 /***/ }),
 

@@ -13,7 +13,7 @@ module.exports = {
     entry: ['./src/index.js'],
     output: {
         filename: 'sylvan.js',
-        path: path.resolve(__dirname, 'build'),
+        path: path.resolve(__dirname, 'dist'),
         library: 'Sylvan',
         libraryTarget: 'umd',
         libraryExport: 'default'

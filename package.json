@@ -9,6 +9,10 @@
   },
   "author": "Nowan (Mykyta Dniprovskyi)",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nowan/sylvanjs.git"
+  },
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
