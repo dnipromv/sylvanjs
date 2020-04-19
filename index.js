@@ -10,4 +10,4 @@ function Sylvan() {
 
 Sylvan.prototype = Object.create(SylvanAPI.prototype);
 
-exports.Sylvan = new Sylvan();
+export default new Sylvan();

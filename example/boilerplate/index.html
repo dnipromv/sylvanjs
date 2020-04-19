@@ -3,17 +3,18 @@
     <head>
         <meta charset="UTF-8">
         <title>Sylvan basic boilerplate</title>
-        <script src="../../build/sylvan.js"></script>
     </head>
     <body>
         <canvas id="gameCanvas" width="800" height="600"></canvas>
-        <script>
+        <script type="module">
+            import Sylvan from "../../dist/sylvan.js";
+
             const Phalangite = new Sylvan.DevoteAPI();
 
             class MainScene extends Phalangite.Scene {
                 async load() {
-                    await Phalangite.loader.load("barbarian.jpg");
-                    await Phalangite.loader.load("knight.jpg");
+                    await Phalangite.loader.load("./barbarian.jpg");
+                    await Phalangite.loader.load("./knight.jpg");
                 }
 
                 init() {
@@ -32,7 +33,7 @@
                     this.director.goTo("Main");
                 }
             }
-            
+
             const game = new Game({canvas: document.getElementById("gameCanvas")});
         </script>
     </body>

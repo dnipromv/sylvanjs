@@ -33,6 +33,17 @@ class InputSystem {
         this._registerEvent(key, "press", this._onPressStep, [{intervalTime, stepTime: Date.now()}, callback, params, scope], this);
     }
 
+    clear(key, callback) {
+        if (Array.isArray(key)) {
+            key.forEach(key => {
+                [`${key}/down`, `${key}/up`, `${key}/press`].forEach(eventKey => this._clearHandler(eventKey.toLowerCase(), callback));
+            }, this);
+        }
+        else {
+            [`${key}/down`, `${key}/up`, `${key}/press`].forEach(eventKey => this._clearHandler(eventKey.toLowerCase(), callback));
+        }
+    }
+
     isKeyDown(key) {
         if (Array.isArray(key)) {
             return key.reduce((state, key) => { return state || this._pressState.get(key.toLowerCase()); }, false);
@@ -56,6 +67,16 @@ class InputSystem {
     _registerHandler(eventKey, callback, params = [], scope) {
         this._handlers[eventKey] = this._handlers[eventKey] || [];
         this._handlers[eventKey].push({callback, params, scope});
+    }
+
+    _clearHandler(eventKey, callback) {
+        const handlers = this._handlers[eventKey];
+        if (handlers && handlers.length > 0) {
+            const handlerIndex = handlers.findIndex(handler => handler.callback === callback);
+            if (handlerIndex >= 0) {
+                handlers.splice(handlerIndex, 1);
+            }
+        }
     }
 
     _onPressStep(handlerData, callback, params, scope) {
